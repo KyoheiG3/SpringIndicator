@@ -9,7 +9,7 @@
 import UIKit
 
 @IBDesignable
-class SpringIndicator: UIView {
+public class SpringIndicator: UIView {
     private let LotateAnimationKey = "rotateAnimation"
     private let ExpandAnimationKey = "expandAnimation"
     private let ContractAnimationKey = "contractAnimation"
@@ -21,21 +21,21 @@ class SpringIndicator: UIView {
         }
     }
     
-    @IBInspectable var animating: Bool = false
-    @IBInspectable var lineWidth: CGFloat = 3
-    @IBInspectable var lineColor: UIColor = UIColor.grayColor()
-    @IBInspectable var lotateDuration: Double = 1.5
-    @IBInspectable var strokeDuration: Double = 0.7
+    @IBInspectable public var animating: Bool = false
+    @IBInspectable public var lineWidth: CGFloat = 3
+    @IBInspectable public var lineColor: UIColor = UIColor.grayColor()
+    @IBInspectable public var lotateDuration: Double = 1.5
+    @IBInspectable public var strokeDuration: Double = 0.7
     
-    var intervalAnimationsHandler: ((SpringIndicator) -> Void)?
+    public var intervalAnimationsHandler: ((SpringIndicator) -> Void)?
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         
         backgroundColor = UIColor.clearColor()
     }
     
-    required init(coder aDecoder: NSCoder) {
+    public required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
@@ -49,7 +49,7 @@ class SpringIndicator: UIView {
         return animationCount
     }
     
-    override func drawRect(rect: CGRect) {
+    public override func drawRect(rect: CGRect) {
         super.drawRect(rect)
         
         if animating {
@@ -77,7 +77,11 @@ class SpringIndicator: UIView {
         return shapeLayer
     }
     
-    func startAnimation() {
+    public func startAnimation() {
+        if layer.animationForKey(LotateAnimationKey) != nil {
+            return
+        }
+        
         let anim = CABasicAnimation(keyPath: "transform.rotation.z")
         anim.duration = lotateDuration
         anim.repeatCount = HUGE
@@ -88,7 +92,7 @@ class SpringIndicator: UIView {
         nextAnimation()
     }
     
-    func stopAnimation() {
+    public func stopAnimation() {
         layer.removeAnimationForKey(LotateAnimationKey)
         pathLayer = nil
     }
