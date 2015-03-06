@@ -14,6 +14,7 @@ public class SpringIndicator: UIView {
     private let ExpandAnimationKey = "expandAnimation"
     private let ContractAnimationKey = "contractAnimation"
     
+    private var indicatorView: UIView
     private var animationCount: CGFloat = 0
     private var pathLayer: CAShapeLayer? {
         willSet {
@@ -30,13 +31,20 @@ public class SpringIndicator: UIView {
     public var intervalAnimationsHandler: ((SpringIndicator) -> Void)?
     
     public override init(frame: CGRect) {
+        indicatorView = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
         super.init(frame: frame)
+        indicatorView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
+        addSubview(indicatorView)
         
         backgroundColor = UIColor.clearColor()
     }
     
     public required init(coder aDecoder: NSCoder) {
+        indicatorView = UIView()
         super.init(coder: aDecoder)
+        indicatorView.frame = bounds
+        indicatorView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
+        addSubview(indicatorView)
     }
     
     private func incrementAnimationCount() -> CGFloat {
@@ -78,7 +86,7 @@ public class SpringIndicator: UIView {
     }
     
     public func startAnimation() {
-        if layer.animationForKey(LotateAnimationKey) != nil {
+        if indicatorView.layer.animationForKey(LotateAnimationKey) != nil {
             return
         }
         
@@ -87,25 +95,25 @@ public class SpringIndicator: UIView {
         anim.repeatCount = HUGE
         anim.fromValue = 0
         anim.toValue = M_PI * 2
-        layer.addAnimation(anim, forKey: LotateAnimationKey)
+        indicatorView.layer.addAnimation(anim, forKey: LotateAnimationKey)
         
         nextAnimation()
     }
     
     public func stopAnimation() {
-        layer.removeAnimationForKey(LotateAnimationKey)
+        indicatorView.layer.removeAnimationForKey(LotateAnimationKey)
         pathLayer = nil
     }
     
     private func nextAnimation() {
         intervalAnimationsHandler?(self)
         
-        if layer.animationForKey(LotateAnimationKey) == nil {
+        if indicatorView.layer.animationForKey(LotateAnimationKey) == nil {
             return
         }
         
         let shapeLayer = rotateLayer()
-        layer.addSublayer(shapeLayer)
+        indicatorView.layer.addSublayer(shapeLayer)
         
         pathLayer = shapeLayer
         
