@@ -14,8 +14,12 @@ public class SpringIndicator: UIView {
     private let ExpandAnimationKey = "expandAnimation"
     private let ContractAnimationKey = "contractAnimation"
     
+    private let strokeTiming = [0, 0.3, 0.5, 0.7, 1]
+    private let strokeValues = [0, 0.1, 0.5, 0.9, 1]
+    
+    private var rotateThreshold = (M_PI / M_PI_2 * 2) - 1
     private var indicatorView: UIView
-    private var animationCount: CGFloat = 0
+    private var animationCount: Double = 0
     private var pathLayer: CAShapeLayer? {
         willSet {
             self.pathLayer?.removeFromSuperlayer()
@@ -47,10 +51,10 @@ public class SpringIndicator: UIView {
         addSubview(indicatorView)
     }
     
-    private func incrementAnimationCount() -> CGFloat {
+    private func incrementAnimationCount() -> Double {
         animationCount++
         
-        if animationCount >= 4 {
+        if animationCount > rotateThreshold {
             animationCount = 0
         }
         
@@ -67,8 +71,8 @@ public class SpringIndicator: UIView {
     
     private func rotateLayer() -> CAShapeLayer {
         let count = incrementAnimationCount()
-        let start = CGFloat(M_PI_2) * (0 - count)
-        let end = CGFloat(M_PI_2) * (3 - count)
+        let start = CGFloat(M_PI_2 * (0 - count))
+        let end = CGFloat(M_PI_2 * (rotateThreshold - count))
         let center = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
         let radius = max(bounds.width, bounds.height) / 2
         
@@ -136,12 +140,10 @@ public class SpringIndicator: UIView {
     }
     
     private func contractSnimation() -> CAPropertyAnimation {
-        let timing = [0, 0.3, 0.5, 0.7, 1]
-        let values = [0, 0.2, 0.5, 0.8, 1]
         let anim = CAKeyframeAnimation(keyPath: "strokeStart")
         anim.duration = strokeDuration
-        anim.keyTimes = timing
-        anim.values = values
+        anim.keyTimes = strokeTiming
+        anim.values = strokeValues
         anim.fillMode = kCAFillModeForwards
         anim.removedOnCompletion = false
         
@@ -149,12 +151,10 @@ public class SpringIndicator: UIView {
     }
     
     private func expandAnimation() -> CAPropertyAnimation {
-        let timing = [0, 0.2, 0.5, 0.7, 1]
-        let values = [0, 0.1, 0.6, 0.9, 1]
         let anim = CAKeyframeAnimation(keyPath: "strokeEnd")
         anim.duration = strokeDuration
-        anim.keyTimes = timing
-        anim.values = values
+        anim.keyTimes = strokeTiming
+        anim.values = strokeValues
         
         return anim
     }
