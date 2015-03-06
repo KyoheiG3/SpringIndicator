@@ -131,7 +131,7 @@ public class SpringIndicator: UIView {
             CATransaction.begin()
             CATransaction.setCompletionBlock(self.nextAnimation)
             
-            self.pathLayer?.addAnimation(self.contractSnimation(), forKey: self.ContractAnimationKey)
+            self.pathLayer?.addAnimation(self.contractAnimation(), forKey: self.ContractAnimationKey)
             CATransaction.commit()
         }
         
@@ -139,7 +139,7 @@ public class SpringIndicator: UIView {
         CATransaction.commit()
     }
     
-    private func contractSnimation() -> CAPropertyAnimation {
+    private func contractAnimation() -> CAPropertyAnimation {
         let anim = CAKeyframeAnimation(keyPath: "strokeStart")
         anim.duration = strokeDuration
         anim.keyTimes = strokeTiming
