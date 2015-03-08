@@ -69,6 +69,10 @@ public class SpringIndicator: UIView {
                 var offsetY = initialInsetTop + scrollView.contentOffset.y
                 frame.origin.y = offsetY
                 
+                if allTargets().count <= 0 {
+                    return
+                }
+                
                 if indicator.isSpinning() {
                     return
                 }
