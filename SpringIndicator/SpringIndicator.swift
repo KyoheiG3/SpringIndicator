@@ -84,7 +84,16 @@ public class SpringIndicator: UIView {
                     return
                 }
                 
-                var offsetY = initialInsetTop + scrollView.contentOffset.y
+                if bounds.height <= 0 {
+                    return
+                }
+                
+                var offsetY = scrollView.contentOffset.y
+                if refreshing == true {
+                    offsetY += initialInsetTop
+                } else {
+                    offsetY += scrollView.contentInset.top
+                }
                 frame.origin.y = offsetY
                 
                 if allTargets().count <= 0 {
@@ -131,6 +140,7 @@ public class SpringIndicator: UIView {
     private var animationCount: Double = 0
     private var pathLayer: CAShapeLayer? {
         willSet {
+            self.pathLayer?.removeAllAnimations()
             self.pathLayer?.removeFromSuperlayer()
         }
     }
@@ -203,34 +213,29 @@ public class SpringIndicator: UIView {
 
 public extension SpringIndicator.Refresher {
     public func startRefreshing(sendActions: Bool = false) {
-        initialInsetTop = initialInsetTop + DefaultContentHeight
-        
-        if let scrollView = superview as? UIScrollView {
-            addObserver(scrollView)
-        }
-        
         if sendActions {
             sendActionsForControlEvents(.ValueChanged)
         }
         
         indicator.layer.addAnimation(refreshAnimation(), forKey: ScaleAnimationKey)
-        indicator.startAnimation(expand: true)
+        indicator.startAnimation()
     }
     
     public func endRefreshing() {
+        refreshing = false
+        
         if let scrollView = superview as? UIScrollView {
-            var insetTop = refreshingInsetTop
-            refreshing = false
+            var insetTop: CGFloat = 0
             
-            if scrollView.contentInset.top != insetTop {
+            if scrollView.superview?.superview == nil {
                 insetTop = refreshingInsetTop - initialInsetTop
             } else {
                 insetTop = refreshingInsetTop
             }
             
-            UIView.performSystemAnimation(.Delete, onViews: [], options: nil, animations: {
+            if scrollView.contentInset.top > insetTop {
                 scrollView.contentInset.top = insetTop
-                }, completion: nil)
+            }
         }
         
         indicator.stopAnimation(true)
@@ -307,9 +312,9 @@ public extension SpringIndicator {
                 indicator.stopAnimation(false, completion: completion)
             }
         } else {
-            stopAnimationsHandler = nil
-            indicatorView.layer.removeAnimationForKey(LotateAnimationKey)
             starting = false
+            stopAnimationsHandler = nil
+            indicatorView.layer.removeAllAnimations()
             pathLayer = nil
             
             completion?(self)
@@ -325,6 +330,7 @@ public extension SpringIndicator {
         stopAnimationsHandler?(self)
         
         if starting == false {
+            pathLayer = nil
             return
         }
         
