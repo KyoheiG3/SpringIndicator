@@ -46,14 +46,16 @@ public class SpringIndicator: UIView {
             userInteractionEnabled = false
             autoresizingMask = .FlexibleWidth | .FlexibleBottomMargin
             
-            if let scrollView = superview as? UIScrollView {
+            if let superview = superview {
                 frame.size.height = DefaultContentHeight
-                frame.size.width = scrollView.bounds.width
-                center.x = scrollView.center.x
+                frame.size.width = superview.bounds.width
+                center.x = superview.center.x
                 
-                initialInsetTop = scrollView.contentInset.top
-                
-                addObserver(scrollView)
+                if let scrollView = superview as? UIScrollView {
+                    initialInsetTop = scrollView.contentInset.top
+                    
+                    addObserver(scrollView)
+                }
             }
         }
         
