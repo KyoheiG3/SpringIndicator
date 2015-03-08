@@ -23,10 +23,8 @@ public class SpringIndicator: UIView {
             return initialInsetTop + (refreshing ? bounds.height : 0)
         }
         
-        public convenience init(targetView: UIScrollView) {
+        public convenience override init() {
             self.init(frame: CGRect.zeroRect)
-            
-            self.targetView = targetView
         }
         
         override init(var frame: CGRect) {
@@ -41,27 +39,21 @@ public class SpringIndicator: UIView {
             setupIndicator()
         }
         
-        public override func drawRect(rect: CGRect) {
-            super.drawRect(rect)
-            
-            targetView?.addObserver(self, forKeyPath: ObserverOffsetKeyPath, options: .New, context: nil)
-        }
-        
         public override func layoutSubviews() {
             super.layoutSubviews()
             
-            if let superview = superview {
-                frame.size.height = DefaultContentHeight
-                frame.size.width = superview.bounds.width
-                center.x = superview.center.x
-                
-                backgroundColor = UIColor.clearColor()
-                userInteractionEnabled = false
-                autoresizingMask = .FlexibleWidth | .FlexibleBottomMargin
-            }
+            backgroundColor = UIColor.clearColor()
+            userInteractionEnabled = false
+            autoresizingMask = .FlexibleWidth | .FlexibleBottomMargin
             
-            if let targetView = targetView {
-                initialInsetTop = targetView.contentInset.top
+            if let scrollView = superview as? UIScrollView {
+                frame.size.height = DefaultContentHeight
+                frame.size.width = scrollView.bounds.width
+                center.x = scrollView.center.x
+                
+                initialInsetTop = scrollView.contentInset.top
+                
+                addObserver(scrollView)
             }
         }
         
@@ -82,7 +74,7 @@ public class SpringIndicator: UIView {
                 }
                 
                 if refreshing && scrollView.dragging == false {
-                    refreshStart(scrollView, sendActions: true)
+                    refreshStart(scrollView)
                     
                     return
                 }
@@ -192,9 +184,16 @@ public extension SpringIndicator.Refresher {
     public func startRefreshing(sendActions: Bool = false) {
         refreshing = true
         
-        if let scrollView = targetView {
-            refreshStart(scrollView, sendActions: sendActions)
+        if let superview = superview as? UIScrollView {
+            addObserver(superview)
         }
+        
+        if sendActions {
+            sendActionsForControlEvents(.ValueChanged)
+        }
+        
+        indicator.layer.addAnimation(refreshAnimation(), forKey: ScaleAnimationKey)
+        indicator.startAnimation(expand: true)
     }
     
     public func endRefreshing() {
@@ -213,6 +212,13 @@ public extension SpringIndicator.Refresher {
 }
 
 private extension SpringIndicator.Refresher {
+    private func addObserver(scrollView: UIScrollView) {
+        if targetView == nil {
+            targetView = scrollView
+            scrollView.addObserver(self, forKeyPath: ObserverOffsetKeyPath, options: .New, context: nil)
+        }
+    }
+    
     private func setupIndicator() {
         indicator.lineWidth = 2
         indicator.lotateDuration = 1
@@ -222,13 +228,10 @@ private extension SpringIndicator.Refresher {
         addSubview(indicator)
     }
     
-    private func refreshStart(scrollView: UIScrollView, sendActions: Bool) {
+    private func refreshStart(scrollView: UIScrollView) {
         scrollView.contentInset.top = refreshingInsetTop
         
-        if sendActions {
-            sendActionsForControlEvents(.ValueChanged)
-        }
-        
+        sendActionsForControlEvents(.ValueChanged)
         indicator.layer.addAnimation(refreshAnimation(), forKey: ScaleAnimationKey)
         indicator.startAnimation(expand: true)
         
