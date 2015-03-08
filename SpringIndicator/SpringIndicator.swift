@@ -11,6 +11,7 @@ import UIKit
 @IBDesignable
 public class SpringIndicator: UIView {
     public class Refresher: UIControl {
+        private var RefresherContext = ""
         private let ObserverOffsetKeyPath = "contentOffset"
         private let ScaleAnimationKey = "scaleAnimation"
         private let DefaultContentHeight: CGFloat = 60
@@ -53,18 +54,33 @@ public class SpringIndicator: UIView {
                 
                 if let scrollView = superview as? UIScrollView {
                     initialInsetTop = scrollView.contentInset.top
-                    
-                    addObserver(scrollView)
                 }
             }
         }
         
+        public override func willMoveToSuperview(newSuperview: UIView!) {
+            if let scrollView = newSuperview as? UIScrollView {
+                addObserver(scrollView)
+            }
+        }
+        
+        weak var target: AnyObject?
+        public override func addTarget(target: AnyObject?, action: Selector, forControlEvents controlEvents: UIControlEvents) {
+            super.addTarget(target, action: action, forControlEvents: controlEvents)
+            
+            self.target = target
+        }
+        
         public override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
             if let scrollView = object as? UIScrollView {
-                if scrollView.superview?.superview == nil {
-                    scrollView.removeObserver(self, forKeyPath: ObserverOffsetKeyPath, context: nil)
+                if target == nil {
+                    targetView?.removeObserver(self, forKeyPath: ObserverOffsetKeyPath, context: &RefresherContext)
                     targetView = nil
                     
+                    return
+                }
+                
+                if scrollView.superview?.superview == nil {
                     return
                 }
                 
@@ -81,7 +97,6 @@ public class SpringIndicator: UIView {
                 
                 if refreshing && scrollView.dragging == false {
                     refreshStart(scrollView)
-                    
                     return
                 }
                 
@@ -188,10 +203,10 @@ public class SpringIndicator: UIView {
 
 public extension SpringIndicator.Refresher {
     public func startRefreshing(sendActions: Bool = false) {
-        refreshing = true
+        initialInsetTop = initialInsetTop + DefaultContentHeight
         
-        if let superview = superview as? UIScrollView {
-            addObserver(superview)
+        if let scrollView = superview as? UIScrollView {
+            addObserver(scrollView)
         }
         
         if sendActions {
@@ -203,14 +218,19 @@ public extension SpringIndicator.Refresher {
     }
     
     public func endRefreshing() {
-        refreshing = false
-        
-        if let scrollView = targetView {
-            if scrollView.contentInset.top > refreshingInsetTop {
-                UIView.performSystemAnimation(.Delete, onViews: [], options: nil, animations: {
-                    scrollView.contentInset.top = self.refreshingInsetTop
-                    }, completion: nil)
+        if let scrollView = superview as? UIScrollView {
+            var insetTop = refreshingInsetTop
+            refreshing = false
+            
+            if scrollView.contentInset.top != insetTop {
+                insetTop = refreshingInsetTop - initialInsetTop
+            } else {
+                insetTop = refreshingInsetTop
             }
+            
+            UIView.performSystemAnimation(.Delete, onViews: [], options: nil, animations: {
+                scrollView.contentInset.top = insetTop
+                }, completion: nil)
         }
         
         indicator.stopAnimation(true)
@@ -220,8 +240,8 @@ public extension SpringIndicator.Refresher {
 private extension SpringIndicator.Refresher {
     private func addObserver(scrollView: UIScrollView) {
         if targetView == nil {
+            scrollView.addObserver(self, forKeyPath: ObserverOffsetKeyPath, options: .New, context: &RefresherContext)
             targetView = scrollView
-            scrollView.addObserver(self, forKeyPath: ObserverOffsetKeyPath, options: .New, context: nil)
         }
     }
     
@@ -235,7 +255,11 @@ private extension SpringIndicator.Refresher {
     }
     
     private func refreshStart(scrollView: UIScrollView) {
-        scrollView.contentInset.top = refreshingInsetTop
+        let insetTop = refreshingInsetTop
+        
+        refreshing = false
+        scrollView.contentInset.top = insetTop
+        refreshing = true
         
         sendActionsForControlEvents(.ValueChanged)
         indicator.layer.addAnimation(refreshAnimation(), forKey: ScaleAnimationKey)
