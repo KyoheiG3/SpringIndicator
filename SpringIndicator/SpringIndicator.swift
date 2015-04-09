@@ -24,7 +24,7 @@ public class SpringIndicator: UIView {
             return initialInsetTop + (refreshing ? bounds.height : 0)
         }
         
-        public convenience override init() {
+        public convenience init() {
             self.init(frame: CGRect.zeroRect)
         }
         
