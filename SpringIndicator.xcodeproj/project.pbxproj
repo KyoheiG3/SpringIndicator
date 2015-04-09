@@ -402,7 +402,6 @@
 				C75E9E4D1AA8B500000304B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 		C75E9E4E1AA8B500000304B8 /* Build configuration list for PBXNativeTarget "SpringIndicatorTests" */ = {
 			isa = XCConfigurationList;
@@ -411,7 +410,6 @@
 				C75E9E501AA8B500000304B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
