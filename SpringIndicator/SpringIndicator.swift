@@ -10,6 +10,19 @@ import UIKit
 
 @IBDesignable
 public class SpringIndicator: UIView {
+    private typealias Me = SpringIndicator
+    
+    private static let LotateAnimationKey = "rotateAnimation"
+    private static let ExpandAnimationKey = "expandAnimation"
+    private static let ContractAnimationKey = "contractAnimation"
+    private static let GroupAnimationKey = "groupAnimation"
+    
+    private static let StrokeTiming = [0, 0.3, 0.5, 0.7, 1]
+    private static let StrokeValues = [0, 0.1, 0.5, 0.9, 1]
+    
+    private static let DispatchQueueLabelTimer = "SpringIndicator.Timer.Thread"
+    private static let timerQueue = dispatch_queue_create(DispatchQueueLabelTimer, DISPATCH_QUEUE_CONCURRENT)
+    
     public class Refresher: UIControl {
         private var RefresherContext = ""
         private let ObserverOffsetKeyPath = "contentOffset"
@@ -22,6 +35,10 @@ public class SpringIndicator: UIView {
         public var targetView: UIScrollView?
         public var refreshingInsetTop: CGFloat {
             return initialInsetTop + (refreshing ? bounds.height : 0)
+        }
+        
+        deinit {
+            indicator.stopAnimation(false)
         }
         
         public convenience init() {
@@ -124,17 +141,18 @@ public class SpringIndicator: UIView {
                 indicator.strokeRatio(ratio)
             }
         }
+        
+        private func setupIndicator() {
+            indicator.lineWidth = 2
+            indicator.lotateDuration = 1
+            indicator.strokeDuration = 0.5
+            indicator.center = center
+            indicator.autoresizingMask = .FlexibleLeftMargin | .FlexibleRightMargin | .FlexibleTopMargin | .FlexibleBottomMargin
+            addSubview(indicator)
+        }
     }
     
-    private let LotateAnimationKey = "rotateAnimation"
-    private let ExpandAnimationKey = "expandAnimation"
-    private let ContractAnimationKey = "contractAnimation"
-    private let GroupAnimationKey = "groupAnimation"
-    
-    private let strokeTiming = [0, 0.3, 0.5, 0.7, 1]
-    private let strokeValues = [0, 0.1, 0.5, 0.9, 1]
-    
-    private var starting: Bool = false
+    private var strokeTimer: NSTimer?
     private var rotateThreshold = (M_PI / M_PI_2 * 2) - 1
     private var indicatorView: UIView
     private var animationCount: Double = 0
@@ -151,6 +169,7 @@ public class SpringIndicator: UIView {
     @IBInspectable public var lotateDuration: Double = 1.5
     @IBInspectable public var strokeDuration: Double = 0.7
     
+    /// It is called when finished stroke. from subthread.
     public var intervalAnimationsHandler: ((SpringIndicator) -> Void)?
     private var stopAnimationsHandler: ((SpringIndicator) -> Void)?
     
@@ -177,6 +196,10 @@ public class SpringIndicator: UIView {
         if animating {
             startAnimation()
         }
+    }
+    
+    public func isSpinning() -> Bool {
+        return pathLayer?.animationForKey(Me.ContractAnimationKey) != nil || pathLayer?.animationForKey(Me.GroupAnimationKey) != nil
     }
     
     private func incrementAnimationCount() -> Double {
@@ -250,15 +273,6 @@ private extension SpringIndicator.Refresher {
         }
     }
     
-    private func setupIndicator() {
-        indicator.lineWidth = 2
-        indicator.lotateDuration = 1
-        indicator.strokeDuration = 0.5
-        indicator.center = center
-        indicator.autoresizingMask = .FlexibleLeftMargin | .FlexibleRightMargin | .FlexibleTopMargin | .FlexibleBottomMargin
-        addSubview(indicator)
-    }
-    
     private func refreshStart(scrollView: UIScrollView) {
         let insetTop = refreshingInsetTop
         
@@ -287,23 +301,27 @@ private extension SpringIndicator.Refresher {
     }
 }
 
+// MARK: - Animation
 public extension SpringIndicator {
     public func startAnimation(expand: Bool = false) {
         stopAnimationsHandler = nil
         
-        if starting {
+        if isSpinning() {
             return
         }
         
-        let anim = CABasicAnimation(keyPath: "transform.rotation.z")
-        anim.duration = lotateDuration
-        anim.repeatCount = HUGE
-        anim.fromValue = 0
-        anim.toValue = M_PI * 2
-        indicatorView.layer.addAnimation(anim, forKey: LotateAnimationKey)
-        starting = true
+        indicatorView.layer.addAnimation(lotateAnimation(), forKey: Me.LotateAnimationKey)
         
         nextAnimation(expand)
+        
+        let timer: NSTimer
+        if expand {
+            timer = createTimer(timeInterval: strokeDuration, userInfo: Me.ContractAnimationKey, repeats: false)
+        } else {
+            timer = createTimer(timeInterval: strokeDuration * 2, userInfo: Me.GroupAnimationKey, repeats: true)
+        }
+        
+        setStrokeTimer(timer)
     }
     
     public func stopAnimation(waitAnimation: Bool, completion: ((SpringIndicator) -> Void)? = nil) {
@@ -312,28 +330,25 @@ public extension SpringIndicator {
                 indicator.stopAnimation(false, completion: completion)
             }
         } else {
-            starting = false
+            strokeTimer?.invalidate()
+            strokeTimer = nil
+            
             stopAnimationsHandler = nil
             indicatorView.layer.removeAllAnimations()
+            pathLayer?.removeAllAnimations()
             pathLayer = nil
             
-            completion?(self)
+            if NSThread.currentThread().isMainThread {
+                completion?(self)
+            } else {
+                dispatch_async(dispatch_get_main_queue()) {
+                    completion?(self)
+                }
+            }
         }
-    }
-    
-    public func isSpinning() -> Bool {
-        return starting
     }
     
     private func nextAnimation(expand: Bool) {
-        intervalAnimationsHandler?(self)
-        stopAnimationsHandler?(self)
-        
-        if starting == false {
-            pathLayer = nil
-            return
-        }
-        
         var count: Double = 0
         if expand == false {
             count = incrementAnimationCount()
@@ -348,16 +363,27 @@ public extension SpringIndicator {
     
     private func nextTransaction(expand: Bool) {
         if expand {
-            pathLayer?.addAnimation(contractAnimation(), forKey: ContractAnimationKey)
+            pathLayer?.addAnimation(contractAnimation(), forKey: Me.ContractAnimationKey)
         } else {
-            pathLayer?.addAnimation(groupAnimation(), forKey: GroupAnimationKey)
+            pathLayer?.addAnimation(groupAnimation(), forKey: Me.GroupAnimationKey)
         }
+    }
+    
+    private func lotateAnimation() -> CAPropertyAnimation {
+        let anim = CABasicAnimation(keyPath: "transform.rotation.z")
+        anim.duration = lotateDuration
+        anim.repeatCount = HUGE
+        anim.fromValue = 0
+        anim.toValue = M_PI * 2
+        
+        return anim
     }
     
     private func groupAnimation() -> CAAnimationGroup {
         let expand = expandAnimation()
-        let contract = contractAnimation()
         expand.beginTime = 0
+        
+        let contract = contractAnimation()
         contract.beginTime = strokeDuration
         
         let group = CAAnimationGroup()
@@ -365,7 +391,6 @@ public extension SpringIndicator {
         group.duration = strokeDuration * 2
         group.fillMode = kCAFillModeForwards
         group.removedOnCompletion = false
-        group.delegate = self
         
         return group
     }
@@ -373,11 +398,10 @@ public extension SpringIndicator {
     private func contractAnimation() -> CAPropertyAnimation {
         let anim = CAKeyframeAnimation(keyPath: "strokeStart")
         anim.duration = strokeDuration
-        anim.keyTimes = strokeTiming
-        anim.values = strokeValues
+        anim.keyTimes = Me.StrokeTiming
+        anim.values = Me.StrokeValues
         anim.fillMode = kCAFillModeForwards
         anim.removedOnCompletion = false
-        anim.delegate = self
         
         return anim
     }
@@ -385,23 +409,44 @@ public extension SpringIndicator {
     private func expandAnimation() -> CAPropertyAnimation {
         let anim = CAKeyframeAnimation(keyPath: "strokeEnd")
         anim.duration = strokeDuration
-        anim.keyTimes = strokeTiming
-        anim.values = strokeValues
+        anim.keyTimes = Me.StrokeTiming
+        anim.values = Me.StrokeValues
         
         return anim
     }
+}
+
+// MARK: - Timer
+internal extension SpringIndicator {
+    private func createTimer(timeInterval ti: NSTimeInterval, userInfo: AnyObject?, repeats yesOrNo: Bool) -> NSTimer {
+        return NSTimer(timeInterval: ti, target: self, selector: Selector("onStrokeTimer:"), userInfo: userInfo, repeats: yesOrNo)
+    }
     
-    // MARK: CAAnimation Delegates
-    override public func animationDidStop(anim: CAAnimation!, finished flag: Bool) {
-        if flag == false {
-            let delay = strokeDuration * 2 * Double(NSEC_PER_SEC)
-            let time  = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-            dispatch_after(time, dispatch_get_main_queue()) {
-                self.nextAnimation(false)
-            }
-        } else {
-            self.nextAnimation(false)
+    private func setStrokeTimer(timer: NSTimer) {
+        strokeTimer?.invalidate()
+        strokeTimer = timer
+        
+        dispatch_async(Me.timerQueue) {
+            NSRunLoop.currentRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
+            NSRunLoop.currentRunLoop().run()
         }
+    }
+    
+    func onStrokeTimer(timer: NSTimer) {
+        stopAnimationsHandler?(self)
+        intervalAnimationsHandler?(self)
+        
+        if isSpinning() == false {
+            return
+        }
+        
+        if (timer.userInfo as? String) == Me.ContractAnimationKey {
+            let timer = createTimer(timeInterval: strokeDuration * 2, userInfo: Me.GroupAnimationKey, repeats: true)
+            
+            setStrokeTimer(timer)
+        }
+        
+        nextAnimation(false)
     }
 }
 
@@ -425,7 +470,7 @@ public extension SpringIndicator {
         }
         
         let anim = stroke(fromValue: 0, toValue: value)
-        pathLayer?.addAnimation(anim, forKey: ExpandAnimationKey)
+        pathLayer?.addAnimation(anim, forKey: Me.ExpandAnimationKey)
     }
     
     private func stroke(#fromValue: CGFloat, toValue: CGFloat) -> CAPropertyAnimation? {
