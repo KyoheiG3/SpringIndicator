@@ -327,8 +327,6 @@ public extension SpringIndicator {
         
         CATransaction.begin()
         CATransaction.setDisableActions(true)
-        indicatorView.layer.transform = CATransform3DMakeRotation(CGFloat(M_PI - M_PI_4) * value, 0, 0, 1)
-        
         pathLayer?.strokeStart = 0
         pathLayer?.strokeEnd = value
         CATransaction.commit()
@@ -346,9 +344,9 @@ public extension SpringIndicator {
         
         private var RefresherContext = ""
         private var initialInsetTop: CGFloat = 0
-        public private(set) var indicator = SpringIndicator(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        public let indicator = SpringIndicator(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         public private(set) var refreshing: Bool = false
-        public var targetView: UIScrollView?
+        public private(set) var targetView: UIScrollView?
         
         deinit {
             indicator.stopAnimation(false)
@@ -435,6 +433,7 @@ public extension SpringIndicator {
                 refreshing = ratio >= 1
                 
                 indicator.strokeRatio(ratio)
+                rotateRatio(ratio)
             }
         }
         
@@ -477,6 +476,23 @@ public extension SpringIndicator {
             }
             
             return abs(offsetY / bounds.height)
+        }
+        
+        private func rotateRatio(ratio: CGFloat) {
+            let value: CGFloat
+            
+            if ratio <= 0 {
+                value = 0
+            } else if ratio >= 1 {
+                value = 1
+            } else {
+                value = ratio
+            }
+            
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            indicator.indicatorView.layer.transform = CATransform3DMakeRotation(CGFloat(M_PI - M_PI_4) * value, 0, 0, 1)
+            CATransaction.commit()
         }
     }
 }
