@@ -22,6 +22,23 @@ public class SpringIndicator: UIView {
     
     private static let DispatchQueueLabelTimer = "SpringIndicator.Timer.Thread"
     private static let timerQueue = dispatch_queue_create(DispatchQueueLabelTimer, DISPATCH_QUEUE_CONCURRENT)
+    private static let timerRunLoop = NSRunLoop.currentRunLoop()
+    private static let timerPort = NSPort()
+    
+    public override class func initialize() {
+        super.initialize()
+        
+        dispatch_async(timerQueue) {
+            self.timerRunLoop.addPort(self.timerPort, forMode: NSRunLoopCommonModes)
+            self.timerRunLoop.run()
+        }
+    }
+    
+    public override class func finalize() {
+        super.finalize()
+        
+        timerPort.invalidate()
+    }
     
     private var strokeTimer: NSTimer? {
         didSet {
@@ -160,13 +177,21 @@ public extension SpringIndicator {
     }
     
     private func strokeTransaction(expand: Bool) {
-        let shapeLayer = nextStrokeLayer(nextAnimationCount(expand))
-        pathLayer = shapeLayer
-        indicatorView.layer.addSublayer(shapeLayer)
+        let count = nextAnimationCount(expand)
+        if let layer = pathLayer {
+            layer.removeAllAnimations()
+            layer.path = nextRotatePath(count).CGPath
+            layer.strokeColor = lineColor.CGColor
+            layer.lineWidth = lineWidth
+        } else {
+            let shapeLayer = nextStrokeLayer(count)
+            pathLayer = shapeLayer
+            indicatorView.layer.addSublayer(shapeLayer)
+        }
         
         let animation = nextStrokeAnimation(expand)
         let animationKey = nextAnimationKey(expand)
-        shapeLayer.addAnimation(animation, forKey: animationKey)
+        pathLayer?.addAnimation(animation, forKey: animationKey)
     }
     
     // MARK: stroke properties
@@ -250,12 +275,11 @@ internal extension SpringIndicator {
         strokeTimer = timer
         
         dispatch_async(Me.timerQueue) {
-            NSRunLoop.currentRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
-            NSRunLoop.currentRunLoop().run()
+            Me.timerRunLoop.addTimer(timer, forMode: NSRunLoopCommonModes)
         }
     }
     
-    func onStrokeTimer(timer: NSTimer) {
+    func onStrokeTimer(timer: NSTimer!) {
         stopAnimationsHandler?(self)
         intervalAnimationsHandler?(self)
         
@@ -263,7 +287,7 @@ internal extension SpringIndicator {
             return
         }
         
-        if (timer.userInfo as? String) == Me.ContractAnimationKey {
+        if (timer?.userInfo as? String) == Me.ContractAnimationKey {
             let timer = createTimer(timeInterval: strokeDuration * 2, userInfo: Me.GroupAnimationKey, repeats: true)
             
             setStrokeTimer(timer)
@@ -492,24 +516,35 @@ public extension SpringIndicator.Refresher {
             }
             
             if scrollView.contentInset.top > insetTop {
+                var completionBlock: (() -> Void) = {
+                    scrollView.contentInset.top = insetTop
+                    
+                    self.indicator.stopAnimation(false) { indicator in
+                        indicator.layer.removeAnimationForKey(Me.ScaleAnimationKey)
+                    }
+                }
+                
                 if scrollView.contentOffset.y < -insetTop {
+                    indicator.layer.addAnimation(refreshEndAnimation(), forKey: Me.ScaleAnimationKey)
+                    
                     UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 0, options: .AllowUserInteraction, animations: {
                         scrollView.setContentOffset(scrollView.contentOffset, animated: false)
                         scrollView.contentOffset.y = -insetTop
                         }) { _ in
-                            scrollView.contentInset.top = insetTop
+                            completionBlock()
                     }
                 } else {
-                    scrollView.contentInset.top = insetTop
+                    CATransaction.begin()
+                    CATransaction.setCompletionBlock(completionBlock)
+                    indicator.layer.addAnimation(refreshEndAnimation(), forKey: Me.ScaleAnimationKey)
+                    CATransaction.commit()
                 }
+                
+                return
             }
-            
-            indicator.layer.addAnimation(self.refreshEndAnimation(), forKey: Me.ScaleAnimationKey)
         }
         
-        indicator.stopAnimation(true) { indicator in
-            self.indicator.layer.removeAnimationForKey(Me.ScaleAnimationKey)
-        }
+        indicator.stopAnimation(false)
     }
     
     private func refreshEndAnimation() -> CAPropertyAnimation {

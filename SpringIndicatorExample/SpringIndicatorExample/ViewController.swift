@@ -23,15 +23,16 @@ class ViewController: UIViewController {
         var colorsIndex = 0
         
         let colorIndicator = SpringIndicator(frame: CGRect(x: 300, y: 100, width: 20, height: 20))
+        colorIndicator.lineColor = colors[colorsIndex]
         colorIndicator.lineWidth = 2
         colorIndicator.lotateDuration = 1
         colorIndicator.strokeDuration = 0.5
         colorIndicator.intervalAnimationsHandler = { indicator in
-            indicator.lineColor = colors[colorsIndex++]
-            
-            if colorsIndex >= colors.count {
+            if ++colorsIndex >= colors.count {
                 colorsIndex = 0
             }
+            
+            indicator.lineColor = colors[colorsIndex]
         }
         view.addSubview(colorIndicator)
         colorIndicator.startAnimation()
