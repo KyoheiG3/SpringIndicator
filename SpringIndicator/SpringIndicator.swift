@@ -55,10 +55,15 @@ public class SpringIndicator: UIView {
         }
     }
     
+    /// Start the animation automatically in drawRect.
     @IBInspectable public var animating: Bool = false
+    /// Line thickness.
     @IBInspectable public var lineWidth: CGFloat = 3
+    /// Line Color. Default is gray.
     @IBInspectable public var lineColor: UIColor = UIColor.grayColor()
+    /// Rotation duration. Default is 1.5
     @IBInspectable public var lotateDuration: Double = 1.5
+    /// Stroke duration. Default is 0.7
     @IBInspectable public var strokeDuration: Double = 0.7
     
     /// It is called when finished stroke. from subthread.
@@ -90,6 +95,7 @@ public class SpringIndicator: UIView {
         }
     }
     
+    /// During stroke animation is true.
     public func isSpinning() -> Bool {
         return pathLayer?.animationForKey(Me.ContractAnimationKey) != nil || pathLayer?.animationForKey(Me.GroupAnimationKey) != nil
     }
@@ -138,6 +144,7 @@ public class SpringIndicator: UIView {
 
 // MARK: - Animation
 public extension SpringIndicator {
+    /// If start from a state in spread is True.
     public func startAnimation(expand: Bool = false) {
         stopAnimationsHandler = nil
         
@@ -154,6 +161,7 @@ public extension SpringIndicator {
         setStrokeTimer(timer)
     }
     
+    /// true is wait for stroke animation.
     public func stopAnimation(waitAnimation: Bool, completion: ((SpringIndicator) -> Void)? = nil) {
         if waitAnimation {
             stopAnimationsHandler = { indicator in
@@ -299,6 +307,7 @@ internal extension SpringIndicator {
 
 // MARK: - Stroke
 public extension SpringIndicator {
+    /// between 0.0 and 1.0.
     public func strokeRatio(ratio: CGFloat) {
         if ratio <= 0 {
             pathLayer = nil
@@ -503,6 +512,7 @@ private extension SpringIndicator.Refresher {
 
 // MARK: - Refresher end
 public extension SpringIndicator.Refresher {
+    /// Must be explicitly called when the refreshing has completed
     public func endRefreshing() {
         refreshing = false
         
