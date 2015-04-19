@@ -15,6 +15,7 @@
 		C724B8D21AA8CC31006F0F00 /* SpringIndicatorExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C724B8D11AA8CC31006F0F00 /* SpringIndicatorExampleTests.swift */; };
 		C724B8E41AA8CDEB006F0F00 /* SpringIndicator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C724B8E11AA8CD7C006F0F00 /* SpringIndicator.framework */; };
 		C724B8E51AA8CDEB006F0F00 /* SpringIndicator.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C724B8E11AA8CD7C006F0F00 /* SpringIndicator.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C727AAF31AE42E9200E132FB /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C727AAF21AE42E9200E132FB /* WebViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +75,7 @@
 		C724B8D01AA8CC31006F0F00 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C724B8D11AA8CC31006F0F00 /* SpringIndicatorExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringIndicatorExampleTests.swift; sourceTree = "<group>"; };
 		C724B8DB1AA8CD7C006F0F00 /* SpringIndicator.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SpringIndicator.xcodeproj; path = ../SpringIndicator.xcodeproj; sourceTree = "<group>"; };
+		C727AAF21AE42E9200E132FB /* WebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 				C724B8C21AA8CC31006F0F00 /* Images.xcassets */,
 				C724B8C41AA8CC31006F0F00 /* LaunchScreen.xib */,
 				C724B8B91AA8CC31006F0F00 /* Supporting Files */,
+				C727AAF21AE42E9200E132FB /* WebViewController.swift */,
 			);
 			path = SpringIndicatorExample;
 			sourceTree = "<group>";
@@ -287,6 +290,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C724B8BE1AA8CC31006F0F00 /* ViewController.swift in Sources */,
+				C727AAF31AE42E9200E132FB /* WebViewController.swift in Sources */,
 				C724B8BC1AA8CC31006F0F00 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

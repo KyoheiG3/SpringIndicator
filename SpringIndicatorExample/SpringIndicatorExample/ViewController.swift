@@ -19,7 +19,7 @@ class ViewController: UIViewController {
         view.addSubview(defaultIndicator)
         defaultIndicator.startAnimation()
         
-        let colors = [UIColor.redColor(), UIColor.blueColor(), UIColor.greenColor(), UIColor.yellowColor()]
+        let colors = [UIColor.redColor(), UIColor.blueColor(), UIColor.orangeColor(), UIColor.greenColor()]
         var colorsIndex = 0
         
         let colorIndicator = SpringIndicator(frame: CGRect(x: 300, y: 100, width: 20, height: 20))

@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6750" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7531" systemVersion="14D131" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="0Of-Yw-92t">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6735"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
     </dependencies>
     <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="hId-KX-iEr">
+            <objects>
+                <navigationController id="0Of-Yw-92t" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="qB6-ae-FqW">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="vXZ-lx-hvc" kind="relationship" relationship="rootViewController" id="XdG-bB-chg"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1CO-C8-Jsq" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-353" y="234"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
@@ -39,16 +55,64 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FyS-Y5-YT3">
+                                <rect key="frame" x="277" y="533" width="46" height="30"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="Cvf-En-Cvv" kind="show" id="vLY-xo-IAz"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="cxV-Ga-Hog" secondAttribute="centerX" id="9QD-EB-OB2"/>
+                            <constraint firstAttribute="centerX" secondItem="FyS-Y5-YT3" secondAttribute="centerX" id="BTE-Uq-MVR"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="FyS-Y5-YT3" secondAttribute="bottom" constant="37" id="BW3-mv-zr9"/>
                             <constraint firstAttribute="centerY" secondItem="cxV-Ga-Hog" secondAttribute="centerY" id="uzQ-oP-hsC"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="Io0-qZ-zHI"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+        </scene>
+        <!--Web View Controller-->
+        <scene sceneID="8H5-fP-CM2">
+            <objects>
+                <viewController id="Cvf-En-Cvv" customClass="WebViewController" customModule="SpringIndicatorExample" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="leO-5X-DJm"/>
+                        <viewControllerLayoutGuide type="bottom" id="kFl-W5-vxs"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="sMd-SK-fwi">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gqD-ZS-zcv">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="delegate" destination="Cvf-En-Cvv" id="0gw-Cm-wEZ"/>
+                                </connections>
+                            </webView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="gqD-ZS-zcv" firstAttribute="top" secondItem="sMd-SK-fwi" secondAttribute="top" id="B7U-dK-JSC"/>
+                            <constraint firstItem="kFl-W5-vxs" firstAttribute="top" secondItem="gqD-ZS-zcv" secondAttribute="bottom" id="NqG-JT-7rz"/>
+                            <constraint firstAttribute="trailing" secondItem="gqD-ZS-zcv" secondAttribute="trailing" id="XWC-YF-KHk"/>
+                            <constraint firstItem="gqD-ZS-zcv" firstAttribute="leading" secondItem="sMd-SK-fwi" secondAttribute="leading" id="igk-c8-9L1"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="webView" destination="gqD-ZS-zcv" id="WXV-5u-hNr"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Vpd-QD-QhT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1094" y="389"/>
         </scene>
     </scenes>
 </document>
