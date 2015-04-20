@@ -479,15 +479,7 @@ public extension SpringIndicator {
         }
         
         private func rotateRatio(ratio: CGFloat) {
-            let value: CGFloat
-            
-            if ratio <= 0 {
-                value = 0
-            } else if ratio >= 1 {
-                value = 1
-            } else {
-                value = ratio
-            }
+            let value = max(min(ratio, 1), 0)
             
             CATransaction.begin()
             CATransaction.setDisableActions(true)
