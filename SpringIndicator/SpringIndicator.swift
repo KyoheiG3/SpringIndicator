@@ -281,10 +281,7 @@ internal extension SpringIndicator {
     
     private func setStrokeTimer(timer: NSTimer) {
         strokeTimer = timer
-        
-        dispatch_async(Me.timerQueue) {
-            Me.timerRunLoop.addTimer(timer, forMode: NSRunLoopCommonModes)
-        }
+        Me.timerRunLoop.addTimer(timer, forMode: NSRunLoopCommonModes)
     }
     
     func onStrokeTimer(timer: NSTimer!) {
