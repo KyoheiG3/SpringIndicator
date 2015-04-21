@@ -88,12 +88,12 @@ Can use Interface Builder
 
 #### Indicator
 
-```Swift
+```swift
 @IBInspectable var animating: Bool
 ```
 * Start the animation automatically in drawRect.
 
-```Swift
+```swift
 @IBInspectable var lineWidth: CGFloat
 ```
 * Line thickness.
@@ -102,7 +102,14 @@ Can use Interface Builder
 @IBInspectable var lineColor: UIColor
 ```
 * Line Color.
-* Default is gray.
+* Default is gray
+
+```swift
+@@IBInspectable var lineCap: Bool
+```
+* Cap style.
+* Options are `round' or `square'. true is `round`.
+* Default is false
 
 ```swift
 @IBInspectable var lotateDuration: Double
