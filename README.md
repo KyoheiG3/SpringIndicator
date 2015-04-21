@@ -91,7 +91,7 @@ Can use Interface Builder
 ```swift
 @IBInspectable var animating: Bool
 ```
-* Start the animation automatically in drawRect.
+* Start the animation automatically in `drawRect`.
 
 ```swift
 @IBInspectable var lineWidth: CGFloat
@@ -102,26 +102,26 @@ Can use Interface Builder
 @IBInspectable var lineColor: UIColor
 ```
 * Line Color.
-* Default is gray
+* Default is `gray`.
 
 ```swift
 @@IBInspectable var lineCap: Bool
 ```
 * Cap style.
-* Options are `round' or `square'. true is `round`.
-* Default is false
+* Options are `round` or `square`. true is `round`.
+* Default is `false`.
 
 ```swift
 @IBInspectable var lotateDuration: Double
 ```
 * Rotation duration.
-* Default is 1.5
+* Default is `1.5`.
 
 ```swift
 @IBInspectable var strokeDuration: Double
 ```
 * Stroke duration.
-* Default is 0.7
+* Default is `0.7`.
 
 #### Refresher
 
@@ -143,22 +143,22 @@ var refreshing: Bool
 ```swift
 func isSpinning() -> Bool
 ```
-* During stroke animation is true.
+* During stroke animation is `true`.
 
 ```swift
 func startAnimation(expand: Bool = default)
 ```
-* If start from a state in spread is True.
+* If start from a state in spread is `true`.
 
 ```swift
 func stopAnimation(waitAnimation: Bool, completion: ((SpringIndicator.SpringIndicator) -> Void)? = default)
 ```
-* true is wait for stroke animation.
+* `true` is wait for stroke animation.
 
 ```swift
 func strokeRatio(ratio: CGFloat)
 ```
-* between 0.0 and 1.0
+* between `0.0` and `1.0`.
 
 #### Refresher
 
