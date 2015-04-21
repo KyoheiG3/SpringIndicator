@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/cocoapods/l/SpringIndicator.svg?style=flat)](http://cocoadocs.org/docsets/SpringIndicator)
 [![Platform](https://img.shields.io/cocoapods/p/SpringIndicator.svg?style=flat)](http://cocoadocs.org/docsets/SpringIndicator)
 
-SpringIndicator is a indicator such as a spring and PullToRefresh.
+Inspired by [Material design components](http://www.google.com/design/spec/components/progress-activity.html)
 
 * Demo gif  
 ![Indicator](https://github.com/KyoheiG3/assets/blob/master/SpringIndicator/indicator.gif)
