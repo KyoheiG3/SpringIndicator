@@ -61,6 +61,8 @@ public class SpringIndicator: UIView {
     @IBInspectable public var lineWidth: CGFloat = 3
     /// Line Color. Default is gray.
     @IBInspectable public var lineColor: UIColor = UIColor.grayColor()
+    /// Cap style. Options are `round' and `square'. true is `round`. Default is false
+    @IBInspectable public var lineCap: Bool = false
     /// Rotation duration. Default is 1.5
     @IBInspectable public var lotateDuration: Double = 1.5
     /// Stroke duration. Default is 0.7
@@ -129,7 +131,7 @@ public class SpringIndicator: UIView {
         shapeLayer.strokeColor = lineColor.CGColor
         shapeLayer.fillColor = nil
         shapeLayer.lineWidth = lineWidth
-        shapeLayer.lineCap = kCALineCapRound
+        shapeLayer.lineCap = lineCap ? kCALineCapRound : kCALineCapSquare
         
         return shapeLayer
     }
