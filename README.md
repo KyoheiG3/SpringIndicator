@@ -5,7 +5,10 @@
 [![License](https://img.shields.io/cocoapods/l/SpringIndicator.svg?style=flat)](http://cocoadocs.org/docsets/SpringIndicator)
 [![Platform](https://img.shields.io/cocoapods/p/SpringIndicator.svg?style=flat)](http://cocoadocs.org/docsets/SpringIndicator)
 
-Inspired by [Material design components](http://www.google.com/design/spec/components/progress-activity.html)
+##### Inspired by [Material design components](http://www.google.com/design/spec/components/progress-activity.html)
+
+* Refresher is a simple as UIRefreshControl.
+* Dont need to add a UIScrollView delegate.
 
 * Demo gif  
 ![Indicator](https://github.com/KyoheiG3/assets/blob/master/SpringIndicator/indicator.gif)
@@ -13,10 +16,6 @@ Inspired by [Material design components](http://www.google.com/design/spec/compo
 
 * Image capture  
 ![Image](https://github.com/KyoheiG3/assets/blob/master/SpringIndicator/refresher.png)
-
-* Movement such as a spring.
-* Refresher is a simple as UIRefreshControl.
-* Don't need to add a UIScrollView delegate.
 
 
 ## How to Install SpringIndicator
