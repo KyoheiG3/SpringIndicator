@@ -8,7 +8,7 @@
 ##### Inspired by [Material design components](http://www.google.com/design/spec/components/progress-activity.html)
 
 * Refresher is a simple as UIRefreshControl.
-* Dont need to add a UIScrollView delegate.
+* Don't need to add a UIScrollView delegate.
 
 * Demo gif  
 ![Indicator](https://github.com/KyoheiG3/assets/blob/master/SpringIndicator/indicator.gif)
