@@ -534,18 +534,20 @@ public extension SpringIndicator.Refresher {
             
             if scrollView.contentInset.top > insetTop {
                 var completionBlock: (() -> Void) = {
-                    scrollView.contentInset.top = insetTop
-                    
                     self.indicator.stopAnimation(false) { indicator in
                         indicator.layer.removeAnimationForKey(Me.ScaleAnimationKey)
                     }
                 }
                 
-                if scrollView.contentOffset.y < -insetTop {
+                let beforeOffsetY = scrollView.contentOffset.y
+                scrollView.contentInset.top = insetTop
+                
+                if beforeOffsetY < -insetTop {
                     indicator.layer.addAnimation(refreshEndAnimation(), forKey: Me.ScaleAnimationKey)
                     
+                    scrollView.contentOffset.y = beforeOffsetY
+                    
                     UIView.animateWithDuration(0.3, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 0, options: .AllowUserInteraction, animations: {
-                        scrollView.setContentOffset(scrollView.contentOffset, animated: false)
                         scrollView.contentOffset.y = -insetTop
                         }) { _ in
                             completionBlock()
