@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7531" systemVersion="14D131" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="0Of-Yw-92t">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="0Of-Yw-92t">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <scenes>
         <!--Navigation Controller-->
@@ -55,9 +55,18 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1uP-jp-eyP">
+                                <rect key="frame" x="263" y="483" width="73" height="30"/>
+                                <state key="normal" title="Table View">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="Z8a-AL-V35" kind="show" id="ktE-cz-wN8"/>
+                                </connections>
+                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FyS-Y5-YT3">
-                                <rect key="frame" x="277" y="533" width="46" height="30"/>
-                                <state key="normal" title="Button">
+                                <rect key="frame" x="266" y="533" width="68" height="30"/>
+                                <state key="normal" title="Web View">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -70,6 +79,8 @@
                             <constraint firstAttribute="centerX" secondItem="cxV-Ga-Hog" secondAttribute="centerX" id="9QD-EB-OB2"/>
                             <constraint firstAttribute="centerX" secondItem="FyS-Y5-YT3" secondAttribute="centerX" id="BTE-Uq-MVR"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="FyS-Y5-YT3" secondAttribute="bottom" constant="37" id="BW3-mv-zr9"/>
+                            <constraint firstItem="FyS-Y5-YT3" firstAttribute="top" secondItem="1uP-jp-eyP" secondAttribute="bottom" constant="20" id="Pyb-wW-OUr"/>
+                            <constraint firstAttribute="centerX" secondItem="1uP-jp-eyP" secondAttribute="centerX" id="qbo-vb-FWE"/>
                             <constraint firstAttribute="centerY" secondItem="cxV-Ga-Hog" secondAttribute="centerY" id="uzQ-oP-hsC"/>
                         </constraints>
                     </view>
@@ -112,7 +123,40 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Vpd-QD-QhT" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1094" y="389"/>
+            <point key="canvasLocation" x="1027" y="-110"/>
+        </scene>
+        <!--Table View Controller-->
+        <scene sceneID="els-al-LXg">
+            <objects>
+                <viewController id="Z8a-AL-V35" customClass="TableViewController" customModule="SpringIndicatorExample" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="bzl-57-nh7"/>
+                        <viewControllerLayoutGuide type="bottom" id="bOD-en-piK"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="yND-me-yZp">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="DGh-mv-smJ">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="DGh-mv-smJ" secondAttribute="trailing" id="0XV-8O-pJz"/>
+                            <constraint firstItem="bOD-en-piK" firstAttribute="top" secondItem="DGh-mv-smJ" secondAttribute="bottom" id="2St-Mc-k2c"/>
+                            <constraint firstItem="DGh-mv-smJ" firstAttribute="top" secondItem="yND-me-yZp" secondAttribute="top" id="Scc-Ec-iFy"/>
+                            <constraint firstItem="DGh-mv-smJ" firstAttribute="leading" secondItem="yND-me-yZp" secondAttribute="leading" id="iYj-pa-QMs"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="tableView" destination="DGh-mv-smJ" id="VYH-aG-75F"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Mdd-u1-BGb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1027" y="571"/>
         </scene>
     </scenes>
 </document>

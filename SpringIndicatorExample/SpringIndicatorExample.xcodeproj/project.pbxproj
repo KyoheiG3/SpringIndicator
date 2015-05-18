@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C70EBE5D1B09A6AB00D95973 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C70EBE5C1B09A6AB00D95973 /* TableViewController.swift */; };
 		C724B8BC1AA8CC31006F0F00 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C724B8BB1AA8CC31006F0F00 /* AppDelegate.swift */; };
 		C724B8BE1AA8CC31006F0F00 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C724B8BD1AA8CC31006F0F00 /* ViewController.swift */; };
 		C724B8C11AA8CC31006F0F00 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C724B8BF1AA8CC31006F0F00 /* Main.storyboard */; };
@@ -64,6 +65,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C70EBE5C1B09A6AB00D95973 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		C724B8B61AA8CC31006F0F00 /* SpringIndicatorExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpringIndicatorExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C724B8BA1AA8CC31006F0F00 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C724B8BB1AA8CC31006F0F00 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 				C724B8C21AA8CC31006F0F00 /* Images.xcassets */,
 				C724B8C41AA8CC31006F0F00 /* LaunchScreen.xib */,
 				C724B8B91AA8CC31006F0F00 /* Supporting Files */,
+				C70EBE5C1B09A6AB00D95973 /* TableViewController.swift */,
 				C727AAF21AE42E9200E132FB /* WebViewController.swift */,
 			);
 			path = SpringIndicatorExample;
@@ -292,6 +295,7 @@
 				C724B8BE1AA8CC31006F0F00 /* ViewController.swift in Sources */,
 				C727AAF31AE42E9200E132FB /* WebViewController.swift in Sources */,
 				C724B8BC1AA8CC31006F0F00 /* AppDelegate.swift in Sources */,
+				C70EBE5D1B09A6AB00D95973 /* TableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
