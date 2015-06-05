@@ -286,7 +286,7 @@ internal extension SpringIndicator {
         Me.timerRunLoop.addTimer(timer, forMode: NSRunLoopCommonModes)
     }
     
-    func onStrokeTimer(timer: NSTimer!) {
+    func onStrokeTimer(sender: AnyObject) {
         stopAnimationsHandler?(self)
         intervalAnimationsHandler?(self)
         
@@ -294,7 +294,7 @@ internal extension SpringIndicator {
             return
         }
         
-        if (timer?.userInfo as? String) == Me.ContractAnimationKey {
+        if let timer = sender as? NSTimer where (timer.userInfo as? String) == Me.ContractAnimationKey {
             let timer = createTimer(timeInterval: strokeDuration * 2, userInfo: Me.GroupAnimationKey, repeats: true)
             
             setStrokeTimer(timer)
