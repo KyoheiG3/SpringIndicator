@@ -87,6 +87,8 @@ public class SpringIndicator: UIView {
         indicatorView.frame = bounds
         indicatorView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
         addSubview(indicatorView)
+        
+        backgroundColor = UIColor.clearColor()
     }
     
     public override func drawRect(rect: CGRect) {
