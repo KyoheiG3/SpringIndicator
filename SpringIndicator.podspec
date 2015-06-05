@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "SpringIndicator"
-  s.version      = "1.1.2"
+  s.version      = "1.1.3"
   s.summary      = "SpringIndicator is a indicator such as a spring and PullToRefresh."
   s.homepage     = "https://github.com/KyoheiG3/SpringIndicator"
   s.license      = { :type => "MIT", :file => "LICENSE" }
