@@ -209,9 +209,9 @@ public extension SpringIndicator {
         let animationKey = nextAnimationKey(expand)
         
         if expand {
-            return createTimer(timeInterval: strokeDuration, userInfo: animationKey, repeats: false)
+            return createStrokeTimer(timeInterval: strokeDuration, userInfo: animationKey, repeats: false)
         } else {
-            return createTimer(timeInterval: strokeDuration * 2, userInfo: animationKey, repeats: true)
+            return createStrokeTimer(timeInterval: strokeDuration * 2, userInfo: animationKey, repeats: true)
         }
     }
     
@@ -278,6 +278,7 @@ public extension SpringIndicator {
 // MARK: - Timer
 internal extension SpringIndicator {
     private func createTimer(timeInterval ti: NSTimeInterval, userInfo: AnyObject?, repeats yesOrNo: Bool) -> NSTimer {
+    private func createStrokeTimer(timeInterval ti: NSTimeInterval, userInfo: AnyObject?, repeats yesOrNo: Bool) -> NSTimer {
         return NSTimer(timeInterval: ti, target: self, selector: Selector("onStrokeTimer:"), userInfo: userInfo, repeats: yesOrNo)
     }
     
@@ -295,7 +296,7 @@ internal extension SpringIndicator {
         }
         
         if let timer = sender as? NSTimer where (timer.userInfo as? String) == Me.ContractAnimationKey {
-            let timer = createTimer(timeInterval: strokeDuration * 2, userInfo: Me.GroupAnimationKey, repeats: true)
+            let timer = createStrokeTimer(timeInterval: strokeDuration * 2, userInfo: Me.GroupAnimationKey, repeats: true)
             
             setStrokeTimer(timer)
         }
