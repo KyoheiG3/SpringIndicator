@@ -40,6 +40,12 @@ public class SpringIndicator: UIView {
         timerPort.invalidate()
     }
     
+    private var rotateTimer: NSTimer? {
+        didSet {
+            oldValue?.invalidate()
+        }
+    }
+    
     private var strokeTimer: NSTimer? {
         didSet {
             oldValue?.invalidate()
@@ -161,8 +167,8 @@ public extension SpringIndicator {
         
         strokeTransaction(expand)
         
-        let timer = nextStrokeTimer(expand)
-        setStrokeTimer(timer)
+        setRotateTimer(timeInterval: lotateDuration)
+        setStrokeTimer(nextStrokeTimer(expand))
     }
     
     /// true is wait for stroke animation.
@@ -172,6 +178,7 @@ public extension SpringIndicator {
                 indicator.stopAnimation(false, completion: completion)
             }
         } else {
+            rotateTimer = nil
             strokeTimer = nil
             stopAnimationsHandler = nil
             indicatorView.layer.removeAllAnimations()
@@ -233,7 +240,7 @@ public extension SpringIndicator {
     private func lotateAnimation(duration: CFTimeInterval) -> CAPropertyAnimation {
         let anim = CABasicAnimation(keyPath: "transform.rotation.z")
         anim.duration = duration
-        anim.repeatCount = HUGE
+        anim.repeatCount = 1
         anim.fromValue = -(M_PI + M_PI_4)
         anim.toValue = M_PI - M_PI_4
         
@@ -279,7 +286,18 @@ public extension SpringIndicator {
 
 // MARK: - Timer
 internal extension SpringIndicator {
-    private func createTimer(timeInterval ti: NSTimeInterval, userInfo: AnyObject?, repeats yesOrNo: Bool) -> NSTimer {
+    private func setRotateTimer(timeInterval ti: NSTimeInterval) {
+        let timer = NSTimer(timeInterval: ti, target: self, selector: Selector("onRotateTimer:"), userInfo: nil, repeats: true)
+        rotateTimer = timer
+        Me.timerRunLoop.addTimer(timer, forMode: NSRunLoopCommonModes)
+    }
+    
+    func onRotateTimer(sender: AnyObject) {
+        let animation = lotateAnimation(lotateDuration)
+        indicatorView.layer.removeAnimationForKey(Me.LotateAnimationKey)
+        indicatorView.layer.addAnimation(animation, forKey: Me.LotateAnimationKey)
+    }
+    
     private func createStrokeTimer(timeInterval ti: NSTimeInterval, userInfo: AnyObject?, repeats yesOrNo: Bool) -> NSTimer {
         return NSTimer(timeInterval: ti, target: self, selector: Selector("onStrokeTimer:"), userInfo: userInfo, repeats: yesOrNo)
     }
