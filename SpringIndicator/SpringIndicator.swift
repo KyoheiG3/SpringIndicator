@@ -413,6 +413,12 @@ public extension SpringIndicator {
             addObserver()
         }
         
+        public override func didMoveToSuperview() {
+            super.didMoveToSuperview()
+            
+            layoutIfNeeded()
+        }
+        
         weak var target: AnyObject?
         public override func addTarget(target: AnyObject?, action: Selector, forControlEvents controlEvents: UIControlEvents) {
             super.addTarget(target, action: action, forControlEvents: controlEvents)
