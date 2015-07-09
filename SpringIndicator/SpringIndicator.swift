@@ -476,7 +476,7 @@ public extension SpringIndicator {
             targetView?.addObserver(self, forKeyPath: Me.ObserverOffsetKeyPath, options: .New, context: &RefresherContext)
         }
         
-        private func removeObserver() {
+        public func removeObserver() {
             targetView?.removeObserver(self, forKeyPath: Me.ObserverOffsetKeyPath, context: &RefresherContext)
         }
         
