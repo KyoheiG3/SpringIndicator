@@ -25,6 +25,10 @@ public class SpringIndicator: UIView {
     private static let timerRunLoop = NSRunLoop.currentRunLoop()
     private static let timerPort = NSPort()
     
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIApplicationWillEnterForegroundNotification, object: nil)
+    }
+    
     public override class func initialize() {
         super.initialize()
         
@@ -38,12 +42,6 @@ public class SpringIndicator: UIView {
         super.finalize()
         
         timerPort.invalidate()
-    }
-    
-    private var rotateTimer: NSTimer? {
-        didSet {
-            oldValue?.invalidate()
-        }
     }
     
     private var strokeTimer: NSTimer? {
@@ -164,10 +162,10 @@ public extension SpringIndicator {
         
         let animation = lotateAnimation(lotateDuration)
         indicatorView.layer.addAnimation(animation, forKey: Me.LotateAnimationKey)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "enterForeground:", name:UIApplicationWillEnterForegroundNotification, object: nil)
         
         strokeTransaction(expand)
         
-        setRotateTimer(timeInterval: lotateDuration)
         setStrokeTimer(nextStrokeTimer(expand))
     }
     
@@ -178,7 +176,6 @@ public extension SpringIndicator {
                 indicator.stopAnimation(false, completion: completion)
             }
         } else {
-            rotateTimer = nil
             strokeTimer = nil
             stopAnimationsHandler = nil
             indicatorView.layer.removeAllAnimations()
@@ -193,6 +190,11 @@ public extension SpringIndicator {
                 }
             }
         }
+    }
+    
+    func enterForeground(notification: NSNotification) {
+        let animation = lotateAnimation(lotateDuration)
+        indicatorView.layer.addAnimation(animation, forKey: Me.LotateAnimationKey)
     }
     
     private func strokeTransaction(expand: Bool) {
@@ -240,7 +242,7 @@ public extension SpringIndicator {
     private func lotateAnimation(duration: CFTimeInterval) -> CAPropertyAnimation {
         let anim = CABasicAnimation(keyPath: "transform.rotation.z")
         anim.duration = duration
-        anim.repeatCount = 1
+        anim.repeatCount = HUGE
         anim.fromValue = -(M_PI + M_PI_4)
         anim.toValue = M_PI - M_PI_4
         
@@ -286,18 +288,6 @@ public extension SpringIndicator {
 
 // MARK: - Timer
 internal extension SpringIndicator {
-    private func setRotateTimer(timeInterval ti: NSTimeInterval) {
-        let timer = NSTimer(timeInterval: ti, target: self, selector: Selector("onRotateTimer:"), userInfo: nil, repeats: true)
-        rotateTimer = timer
-        Me.timerRunLoop.addTimer(timer, forMode: NSRunLoopCommonModes)
-    }
-    
-    func onRotateTimer(sender: AnyObject) {
-        let animation = lotateAnimation(lotateDuration)
-        indicatorView.layer.removeAnimationForKey(Me.LotateAnimationKey)
-        indicatorView.layer.addAnimation(animation, forKey: Me.LotateAnimationKey)
-    }
-    
     private func createStrokeTimer(timeInterval ti: NSTimeInterval, userInfo: AnyObject?, repeats yesOrNo: Bool) -> NSTimer {
         return NSTimer(timeInterval: ti, target: self, selector: Selector("onStrokeTimer:"), userInfo: userInfo, repeats: yesOrNo)
     }
