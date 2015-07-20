@@ -39,7 +39,7 @@ class WebViewController: UIViewController, UIWebViewDelegate {
         refreshControl.endRefreshing()
     }
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError) {
+    func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
         refreshControl.endRefreshing()
     }
 }
