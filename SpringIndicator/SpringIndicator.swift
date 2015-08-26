@@ -363,7 +363,7 @@ public extension SpringIndicator {
         }
         
         public convenience init() {
-            self.init(frame: CGRect.zeroRect)
+            self.init(frame: CGRect.zero)
         }
         
         override init(frame: CGRect) {
