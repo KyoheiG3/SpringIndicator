@@ -25,10 +25,6 @@ public class SpringIndicator: UIView {
     private static let timerRunLoop = NSRunLoop.currentRunLoop()
     private static let timerPort = NSPort()
     
-    deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIApplicationWillEnterForegroundNotification, object: nil)
-    }
-    
     public override class func initialize() {
         super.initialize()
         
@@ -162,7 +158,6 @@ public extension SpringIndicator {
         
         let animation = lotateAnimation(lotateDuration)
         indicatorView.layer.addAnimation(animation, forKey: Me.LotateAnimationKey)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "enterForeground:", name:UIApplicationWillEnterForegroundNotification, object: nil)
         
         strokeTransaction(expand)
         
@@ -190,11 +185,6 @@ public extension SpringIndicator {
                 }
             }
         }
-    }
-    
-    func enterForeground(notification: NSNotification) {
-        let animation = lotateAnimation(lotateDuration)
-        indicatorView.layer.addAnimation(animation, forKey: Me.LotateAnimationKey)
     }
     
     private func strokeTransaction(expand: Bool) {
@@ -245,6 +235,7 @@ public extension SpringIndicator {
         anim.repeatCount = HUGE
         anim.fromValue = -(M_PI + M_PI_4)
         anim.toValue = M_PI - M_PI_4
+        anim.removedOnCompletion = false
         
         return anim
     }
