@@ -12,7 +12,7 @@ import UIKit
 public class SpringIndicator: UIView {
     private typealias Me = SpringIndicator
     
-    private static let LotateAnimationKey = "rotateAnimation"
+    private static let RotateAnimationKey = "rotateAnimation"
     private static let ExpandAnimationKey = "expandAnimation"
     private static let ContractAnimationKey = "contractAnimation"
     private static let GroupAnimationKey = "groupAnimation"
@@ -64,7 +64,7 @@ public class SpringIndicator: UIView {
     /// Cap style. Options are `round' and `square'. true is `round`. Default is false
     @IBInspectable public var lineCap: Bool = false
     /// Rotation duration. Default is 1.5
-    @IBInspectable public var lotateDuration: Double = 1.5
+    @IBInspectable public var rotateDuration: Double = 1.5
     /// Stroke duration. Default is 0.7
     @IBInspectable public var strokeDuration: Double = 0.7
     
@@ -156,8 +156,8 @@ public extension SpringIndicator {
             return
         }
         
-        let animation = lotateAnimation(lotateDuration)
-        indicatorView.layer.addAnimation(animation, forKey: Me.LotateAnimationKey)
+        let animation = rotateAnimation(rotateDuration)
+        indicatorView.layer.addAnimation(animation, forKey: Me.RotateAnimationKey)
         
         strokeTransaction(expand)
         
@@ -229,7 +229,7 @@ public extension SpringIndicator {
     }
     
     // MARK: animations
-    private func lotateAnimation(duration: CFTimeInterval) -> CAPropertyAnimation {
+    private func rotateAnimation(duration: CFTimeInterval) -> CAPropertyAnimation {
         let anim = CABasicAnimation(keyPath: "transform.rotation.z")
         anim.duration = duration
         anim.repeatCount = HUGE
@@ -451,7 +451,7 @@ public extension SpringIndicator {
         
         private func setupIndicator() {
             indicator.lineWidth = 2
-            indicator.lotateDuration = 1
+            indicator.rotateDuration = 1
             indicator.strokeDuration = 0.5
             indicator.center = center
             indicator.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleTopMargin, .FlexibleBottomMargin]

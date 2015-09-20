@@ -111,7 +111,7 @@ Can use Interface Builder
 * Default is `false`.
 
 ```swift
-@IBInspectable var lotateDuration: Double
+@IBInspectable var rotateDuration: Double
 ```
 * Rotation duration.
 * Default is `1.5`.
