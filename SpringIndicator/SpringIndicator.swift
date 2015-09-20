@@ -343,7 +343,7 @@ public extension SpringIndicator {
         private static let ScaleAnimationKey = "scaleAnimation"
         private static let DefaultContentHeight: CGFloat = 60
         
-        private var RefresherContext = ""
+        private var RefresherContext = UInt8()
         private var initialInsetTop: CGFloat = 0
         public let indicator = SpringIndicator(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         public private(set) var refreshing: Bool = false
@@ -419,33 +419,38 @@ public extension SpringIndicator {
         }
         
         public override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-            if let scrollView = object as? UIScrollView {
-                if target == nil {
-                    removeObserver()
-                    targetView = nil
-                    return
+            switch context {
+            case &RefresherContext:
+                if let scrollView = object as? UIScrollView {
+                    if target == nil {
+                        removeObserver()
+                        targetView = nil
+                        return
+                    }
+                    
+                    if bounds.height <= 0 {
+                        return
+                    }
+                    
+                    frame.origin.y = scrollOffset(scrollView)
+                    
+                    if indicator.isSpinning() {
+                        return
+                    }
+                    
+                    if refreshing && scrollView.dragging == false {
+                        refreshStart(scrollView)
+                        return
+                    }
+                    
+                    let ratio = scrollRatio(scrollView)
+                    refreshing = ratio >= 1
+                    
+                    indicator.strokeRatio(ratio)
+                    rotateRatio(ratio)
                 }
-                
-                if bounds.height <= 0 {
-                    return
-                }
-                
-                frame.origin.y = scrollOffset(scrollView)
-                
-                if indicator.isSpinning() {
-                    return
-                }
-                
-                if refreshing && scrollView.dragging == false {
-                    refreshStart(scrollView)
-                    return
-                }
-                
-                let ratio = scrollRatio(scrollView)
-                refreshing = ratio >= 1
-                
-                indicator.strokeRatio(ratio)
-                rotateRatio(ratio)
+            default:
+                super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
             }
         }
         
