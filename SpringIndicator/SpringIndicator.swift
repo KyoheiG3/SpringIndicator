@@ -296,7 +296,7 @@ internal extension SpringIndicator {
             return
         }
         
-        if let timer = sender as? NSTimer where (timer.userInfo as? String) == Me.ContractAnimationKey {
+        if let timer = sender as? NSTimer, key = timer.userInfo as? String where key == Me.ContractAnimationKey {
             let timer = createStrokeTimer(timeInterval: strokeDuration * 2, userInfo: Me.GroupAnimationKey, repeats: true)
             
             setStrokeTimer(timer)
