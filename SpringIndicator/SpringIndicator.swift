@@ -12,7 +12,7 @@ import UIKit
 public class SpringIndicator: UIView {
     private typealias Me = SpringIndicator
     
-    private static let LotateAnimationKey = "rotateAnimation"
+    private static let RotateAnimationKey = "rotateAnimation"
     private static let ExpandAnimationKey = "expandAnimation"
     private static let ContractAnimationKey = "contractAnimation"
     private static let GroupAnimationKey = "groupAnimation"
@@ -24,10 +24,6 @@ public class SpringIndicator: UIView {
     private static let timerQueue = dispatch_queue_create(DispatchQueueLabelTimer, DISPATCH_QUEUE_CONCURRENT)
     private static let timerRunLoop = NSRunLoop.currentRunLoop()
     private static let timerPort = NSPort()
-    
-    deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIApplicationWillEnterForegroundNotification, object: nil)
-    }
     
     public override class func initialize() {
         super.initialize()
@@ -68,7 +64,7 @@ public class SpringIndicator: UIView {
     /// Cap style. Options are `round' and `square'. true is `round`. Default is false
     @IBInspectable public var lineCap: Bool = false
     /// Rotation duration. Default is 1.5
-    @IBInspectable public var lotateDuration: Double = 1.5
+    @IBInspectable public var rotateDuration: Double = 1.5
     /// Stroke duration. Default is 0.7
     @IBInspectable public var strokeDuration: Double = 0.7
     
@@ -79,17 +75,17 @@ public class SpringIndicator: UIView {
     public override init(frame: CGRect) {
         indicatorView = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
         super.init(frame: frame)
-        indicatorView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
+        indicatorView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         addSubview(indicatorView)
         
         backgroundColor = UIColor.clearColor()
     }
     
-    public required init(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         indicatorView = UIView()
         super.init(coder: aDecoder)
         indicatorView.frame = bounds
-        indicatorView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
+        indicatorView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         addSubview(indicatorView)
         
         backgroundColor = UIColor.clearColor()
@@ -126,7 +122,7 @@ public class SpringIndicator: UIView {
         let center = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
         let radius = max(bounds.width, bounds.height) / 2
         
-        var arc = UIBezierPath(arcCenter: center, radius: radius,  startAngle: start, endAngle: end, clockwise: true)
+        let arc = UIBezierPath(arcCenter: center, radius: radius,  startAngle: start, endAngle: end, clockwise: true)
         arc.lineWidth = 0
         
         return arc
@@ -160,9 +156,8 @@ public extension SpringIndicator {
             return
         }
         
-        let animation = lotateAnimation(lotateDuration)
-        indicatorView.layer.addAnimation(animation, forKey: Me.LotateAnimationKey)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "enterForeground:", name:UIApplicationWillEnterForegroundNotification, object: nil)
+        let animation = rotateAnimation(rotateDuration)
+        indicatorView.layer.addAnimation(animation, forKey: Me.RotateAnimationKey)
         
         strokeTransaction(expand)
         
@@ -190,11 +185,6 @@ public extension SpringIndicator {
                 }
             }
         }
-    }
-    
-    func enterForeground(notification: NSNotification) {
-        let animation = lotateAnimation(lotateDuration)
-        indicatorView.layer.addAnimation(animation, forKey: Me.LotateAnimationKey)
     }
     
     private func strokeTransaction(expand: Bool) {
@@ -239,12 +229,13 @@ public extension SpringIndicator {
     }
     
     // MARK: animations
-    private func lotateAnimation(duration: CFTimeInterval) -> CAPropertyAnimation {
+    private func rotateAnimation(duration: CFTimeInterval) -> CAPropertyAnimation {
         let anim = CABasicAnimation(keyPath: "transform.rotation.z")
         anim.duration = duration
         anim.repeatCount = HUGE
         anim.fromValue = -(M_PI + M_PI_4)
         anim.toValue = M_PI - M_PI_4
+        anim.removedOnCompletion = false
         
         return anim
     }
@@ -305,7 +296,7 @@ internal extension SpringIndicator {
             return
         }
         
-        if let timer = sender as? NSTimer where (timer.userInfo as? String) == Me.ContractAnimationKey {
+        if let timer = sender as? NSTimer, key = timer.userInfo as? String where key == Me.ContractAnimationKey {
             let timer = createStrokeTimer(timeInterval: strokeDuration * 2, userInfo: Me.GroupAnimationKey, repeats: true)
             
             setStrokeTimer(timer)
@@ -352,7 +343,7 @@ public extension SpringIndicator {
         private static let ScaleAnimationKey = "scaleAnimation"
         private static let DefaultContentHeight: CGFloat = 60
         
-        private var RefresherContext = ""
+        private var RefresherContext = UInt8()
         private var initialInsetTop: CGFloat = 0
         public let indicator = SpringIndicator(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         public private(set) var refreshing: Bool = false
@@ -363,16 +354,16 @@ public extension SpringIndicator {
         }
         
         public convenience init() {
-            self.init(frame: CGRect.zeroRect)
+            self.init(frame: CGRect.zero)
         }
         
-        override init(var frame: CGRect) {
+        override init(frame: CGRect) {
             super.init(frame: frame)
             
             setupIndicator()
         }
         
-        public required init(coder aDecoder: NSCoder) {
+        public required init?(coder aDecoder: NSCoder) {
             super.init(coder: aDecoder)
             
             setupIndicator()
@@ -383,7 +374,7 @@ public extension SpringIndicator {
             
             backgroundColor = UIColor.clearColor()
             userInteractionEnabled = false
-            autoresizingMask = .FlexibleWidth | .FlexibleBottomMargin
+            autoresizingMask = [.FlexibleWidth, .FlexibleBottomMargin]
             
             if let superview = superview {
                 frame.size.height = Me.DefaultContentHeight
@@ -427,43 +418,48 @@ public extension SpringIndicator {
             self.target = nil
         }
         
-        public override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
-            if let scrollView = object as? UIScrollView {
-                if target == nil {
-                    removeObserver()
-                    targetView = nil
-                    return
+        public override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+            switch context {
+            case &RefresherContext:
+                if let scrollView = object as? UIScrollView {
+                    if target == nil {
+                        removeObserver()
+                        targetView = nil
+                        return
+                    }
+                    
+                    if bounds.height <= 0 {
+                        return
+                    }
+                    
+                    frame.origin.y = scrollOffset(scrollView)
+                    
+                    if indicator.isSpinning() {
+                        return
+                    }
+                    
+                    if refreshing && scrollView.dragging == false {
+                        refreshStart(scrollView)
+                        return
+                    }
+                    
+                    let ratio = scrollRatio(scrollView)
+                    refreshing = ratio >= 1
+                    
+                    indicator.strokeRatio(ratio)
+                    rotateRatio(ratio)
                 }
-                
-                if bounds.height <= 0 {
-                    return
-                }
-                
-                frame.origin.y = scrollOffset(scrollView)
-                
-                if indicator.isSpinning() {
-                    return
-                }
-                
-                if refreshing && scrollView.dragging == false {
-                    refreshStart(scrollView)
-                    return
-                }
-                
-                let ratio = scrollRatio(scrollView)
-                refreshing = ratio >= 1
-                
-                indicator.strokeRatio(ratio)
-                rotateRatio(ratio)
+            default:
+                super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
             }
         }
         
         private func setupIndicator() {
             indicator.lineWidth = 2
-            indicator.lotateDuration = 1
+            indicator.rotateDuration = 1
             indicator.strokeDuration = 0.5
             indicator.center = center
-            indicator.autoresizingMask = .FlexibleLeftMargin | .FlexibleRightMargin | .FlexibleTopMargin | .FlexibleBottomMargin
+            indicator.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleTopMargin, .FlexibleBottomMargin]
             addSubview(indicator)
         }
         
@@ -515,7 +511,7 @@ private extension SpringIndicator.Refresher {
     private func refreshStart(scrollView: UIScrollView) {
         sendActionsForControlEvents(.ValueChanged)
         indicator.layer.addAnimation(refreshStartAnimation(), forKey: Me.ScaleAnimationKey)
-        indicator.startAnimation(expand: true)
+        indicator.startAnimation(true)
         
         let insetTop = initialInsetTop + bounds.height
         
@@ -555,7 +551,7 @@ public extension SpringIndicator.Refresher {
             }
             
             if scrollView.contentInset.top > insetTop {
-                var completionBlock: (() -> Void) = {
+                let completionBlock: (() -> Void) = {
                     self.indicator.stopAnimation(false) { indicator in
                         indicator.layer.removeAnimationForKey(Me.ScaleAnimationKey)
                     }
