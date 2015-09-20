@@ -25,7 +25,7 @@ class ViewController: UIViewController {
         let colorIndicator = SpringIndicator(frame: CGRect(x: 300, y: 100, width: 20, height: 20))
         colorIndicator.lineColor = colors[colorsIndex]
         colorIndicator.lineWidth = 2
-        colorIndicator.lotateDuration = 1
+        colorIndicator.rotateDuration = 1
         colorIndicator.strokeDuration = 0.5
         colorIndicator.intervalAnimationsHandler = { indicator in
             if ++colorsIndex >= colors.count {
