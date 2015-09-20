@@ -1,11 +1,11 @@
 # SpringIndicator
 
-[![Carthage Compatibility](https://img.shields.io/badge/carthage-✓-f2a77e.svg?style=flat)](https://github.com/Carthage/Carthage/)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Version](https://img.shields.io/cocoapods/v/SpringIndicator.svg?style=flat)](http://cocoadocs.org/docsets/SpringIndicator)
 [![License](https://img.shields.io/cocoapods/l/SpringIndicator.svg?style=flat)](http://cocoadocs.org/docsets/SpringIndicator)
 [![Platform](https://img.shields.io/cocoapods/p/SpringIndicator.svg?style=flat)](http://cocoadocs.org/docsets/SpringIndicator)
 
-##### Inspired by [Material design components](http://www.google.com/design/spec/components/progress-activity.html)
+#### [Appetize's Demo](https://appetize.io/app/taw1k1486yhxqy35gv7jrver7g)
 
 * Refresher is a simple as UIRefreshControl.
 * Don't need to add a UIScrollView delegate.
