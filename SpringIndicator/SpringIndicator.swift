@@ -423,19 +423,6 @@ public extension SpringIndicator {
             self.target = nil
         }
         
-        
-        //        public override func observeValue(forKeyPath keyPath: String?, of object: AnyObject?, change: [NSKeyValueChangeKey : AnyObject]?, context: UnsafeMutablePointer<Void>?) {
-        //            switch context {
-        //            case .RefresherConext:
-        //                print("Mello")
-        //                return
-        //            default:
-        //                print ("Hello")
-        //                return
-        //            }
-        //
-        //        }
-        
         public override func observeValue(forKeyPath keyPath: String?, of object: AnyObject?, change: [NSKeyValueChangeKey : AnyObject]?, context: UnsafeMutablePointer<Void>?) {
             
             
