@@ -296,10 +296,15 @@ internal extension SpringIndicator {
             return
         }
         
-        if let timer = sender as? Timer, key = timer.userInfo as? String where key == Me.ContractAnimationKey {
+        if let timer = sender as? Timer {
+            if !timer.isValid {
+                return
+            }
+            if let key = timer.userInfo as? String where key == Me.ContractAnimationKey {
             let timer = createStrokeTimer(timeInterval: strokeDuration * 2, userInfo: Me.GroupAnimationKey, repeats: true)
             
             setStrokeTimer(timer)
+            }
         }
         
         strokeTransaction(false)
