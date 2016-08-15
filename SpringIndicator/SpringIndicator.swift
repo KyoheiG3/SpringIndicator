@@ -21,15 +21,15 @@ public class SpringIndicator: UIView {
     private static let StrokeValues = [0, 0.1, 0.5, 0.9, 1]
     
     private static let DispatchQueueLabelTimer = "SpringIndicator.Timer.Thread"
-    private static let timerQueue = dispatch_queue_create(DispatchQueueLabelTimer, DISPATCH_QUEUE_CONCURRENT)
-    private static let timerRunLoop = NSRunLoop.currentRunLoop()
-    private static let timerPort = NSPort()
+    private static let timerQueue = DispatchQueue(label: DispatchQueueLabelTimer, attributes: DispatchQueueAttributes.concurrent)
+    private static let timerRunLoop = RunLoop.current
+    private static let timerPort = Port()
     
     public override class func initialize() {
         super.initialize()
         
-        dispatch_async(timerQueue) {
-            self.timerRunLoop.addPort(self.timerPort, forMode: NSRunLoopCommonModes)
+        timerQueue.async {
+            self.timerRunLoop.add(self.timerPort, forMode: RunLoopMode.commonModes)
             self.timerRunLoop.run()
         }
     }
@@ -40,7 +40,7 @@ public class SpringIndicator: UIView {
         timerPort.invalidate()
     }
     
-    private var strokeTimer: NSTimer? {
+    private var strokeTimer: Timer? {
         didSet {
             oldValue?.invalidate()
         }
@@ -60,7 +60,7 @@ public class SpringIndicator: UIView {
     /// Line thickness.
     @IBInspectable public var lineWidth: CGFloat = 3
     /// Line Color. Default is gray.
-    @IBInspectable public var lineColor: UIColor = UIColor.grayColor()
+    @IBInspectable public var lineColor: UIColor = UIColor.gray()
     /// Cap style. Options are `round' and `square'. true is `round`. Default is false
     @IBInspectable public var lineCap: Bool = false
     /// Rotation duration. Default is 1.5
@@ -75,24 +75,24 @@ public class SpringIndicator: UIView {
     public override init(frame: CGRect) {
         indicatorView = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
         super.init(frame: frame)
-        indicatorView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        indicatorView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         addSubview(indicatorView)
         
-        backgroundColor = UIColor.clearColor()
+        backgroundColor = UIColor.clear()
     }
     
     public required init?(coder aDecoder: NSCoder) {
         indicatorView = UIView()
         super.init(coder: aDecoder)
         indicatorView.frame = bounds
-        indicatorView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        indicatorView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         addSubview(indicatorView)
         
-        backgroundColor = UIColor.clearColor()
+        backgroundColor = UIColor.clear()
     }
     
-    public override func drawRect(rect: CGRect) {
-        super.drawRect(rect)
+    public override func draw(_ rect: CGRect) {
+        super.draw(rect)
         
         if animating {
             startAnimation()
@@ -101,11 +101,11 @@ public class SpringIndicator: UIView {
     
     /// During stroke animation is true.
     public func isSpinning() -> Bool {
-        return pathLayer?.animationForKey(Me.ContractAnimationKey) != nil || pathLayer?.animationForKey(Me.GroupAnimationKey) != nil
+        return pathLayer?.animation(forKey: Me.ContractAnimationKey) != nil || pathLayer?.animation(forKey: Me.GroupAnimationKey) != nil
     }
     
     private func incrementAnimationCount() -> Double {
-        animationCount++
+        animationCount += 1
         
         if animationCount > rotateThreshold {
             animationCount = 0
@@ -114,7 +114,7 @@ public class SpringIndicator: UIView {
         return animationCount
     }
     
-    private func nextRotatePath(count: Double) -> UIBezierPath {
+    private func nextRotatePath(_ count: Double) -> UIBezierPath {
         animationCount = count
         
         let start = CGFloat(M_PI_2 * (0 - count))
@@ -130,7 +130,7 @@ public class SpringIndicator: UIView {
     
     private func rotateLayer() -> CAShapeLayer {
         let shapeLayer = CAShapeLayer()
-        shapeLayer.strokeColor = lineColor.CGColor
+        shapeLayer.strokeColor = lineColor.cgColor
         shapeLayer.fillColor = nil
         shapeLayer.lineWidth = lineWidth
         shapeLayer.lineCap = lineCap ? kCALineCapRound : kCALineCapSquare
@@ -138,9 +138,9 @@ public class SpringIndicator: UIView {
         return shapeLayer
     }
     
-    private func nextStrokeLayer(count: Double) -> CAShapeLayer {
+    private func nextStrokeLayer(_ count: Double) -> CAShapeLayer {
         let shapeLayer = rotateLayer()
-        shapeLayer.path = nextRotatePath(count).CGPath
+        shapeLayer.path = nextRotatePath(count).cgPath
         
         return shapeLayer
     }
@@ -149,7 +149,7 @@ public class SpringIndicator: UIView {
 // MARK: - Animation
 public extension SpringIndicator {
     /// If start from a state in spread is True.
-    public func startAnimation(expand: Bool = false) {
+    public func startAnimation(_ expand: Bool = false) {
         stopAnimationsHandler = nil
         
         if isSpinning() {
@@ -157,7 +157,7 @@ public extension SpringIndicator {
         }
         
         let animation = rotateAnimation(rotateDuration)
-        indicatorView.layer.addAnimation(animation, forKey: Me.RotateAnimationKey)
+        indicatorView.layer.add(animation, forKey: Me.RotateAnimationKey)
         
         strokeTransaction(expand)
         
@@ -165,7 +165,7 @@ public extension SpringIndicator {
     }
     
     /// true is wait for stroke animation.
-    public func stopAnimation(waitAnimation: Bool, completion: ((SpringIndicator) -> Void)? = nil) {
+    public func stopAnimation(_ waitAnimation: Bool, completion: ((SpringIndicator) -> Void)? = nil) {
         if waitAnimation {
             stopAnimationsHandler = { indicator in
                 indicator.stopAnimation(false, completion: completion)
@@ -177,22 +177,22 @@ public extension SpringIndicator {
             pathLayer?.strokeEnd = 0
             pathLayer = nil
             
-            if NSThread.currentThread().isMainThread {
+            if Thread.current.isMainThread {
                 completion?(self)
             } else {
-                dispatch_async(dispatch_get_main_queue()) {
+                DispatchQueue.main.async {
                     completion?(self)
                 }
             }
         }
     }
     
-    private func strokeTransaction(expand: Bool) {
+    private func strokeTransaction(_ expand: Bool) {
         let count = nextAnimationCount(expand)
         if let layer = pathLayer {
             layer.removeAllAnimations()
-            layer.path = nextRotatePath(count).CGPath
-            layer.strokeColor = lineColor.CGColor
+            layer.path = nextRotatePath(count).cgPath
+            layer.strokeColor = lineColor.cgColor
             layer.lineWidth = lineWidth
         } else {
             let shapeLayer = nextStrokeLayer(count)
@@ -202,11 +202,11 @@ public extension SpringIndicator {
         
         let animation = nextStrokeAnimation(expand)
         let animationKey = nextAnimationKey(expand)
-        pathLayer?.addAnimation(animation, forKey: animationKey)
+        pathLayer?.add(animation, forKey: animationKey)
     }
     
     // MARK: stroke properties
-    private func nextStrokeTimer(expand: Bool) -> NSTimer {
+    private func nextStrokeTimer(_ expand: Bool) -> Timer {
         let animationKey = nextAnimationKey(expand)
         
         if expand {
@@ -216,31 +216,31 @@ public extension SpringIndicator {
         }
     }
     
-    private func nextAnimationKey(expand: Bool) -> String {
+    private func nextAnimationKey(_ expand: Bool) -> String {
         return expand ? Me.ContractAnimationKey : Me.GroupAnimationKey
     }
     
-    private func nextAnimationCount(expand: Bool) -> Double {
+    private func nextAnimationCount(_ expand: Bool) -> Double {
         return expand ? 0 : incrementAnimationCount()
     }
     
-    private func nextStrokeAnimation(expand: Bool) -> CAAnimation {
+    private func nextStrokeAnimation(_ expand: Bool) -> CAAnimation {
         return expand ? contractAnimation(strokeDuration) : groupAnimation(strokeDuration)
     }
     
     // MARK: animations
-    private func rotateAnimation(duration: CFTimeInterval) -> CAPropertyAnimation {
+    private func rotateAnimation(_ duration: CFTimeInterval) -> CAPropertyAnimation {
         let anim = CABasicAnimation(keyPath: "transform.rotation.z")
         anim.duration = duration
         anim.repeatCount = HUGE
         anim.fromValue = -(M_PI + M_PI_4)
         anim.toValue = M_PI - M_PI_4
-        anim.removedOnCompletion = false
+        anim.isRemovedOnCompletion = false
         
         return anim
     }
     
-    private func groupAnimation(duration: CFTimeInterval) -> CAAnimationGroup {
+    private func groupAnimation(_ duration: CFTimeInterval) -> CAAnimationGroup {
         let expand = expandAnimation(duration)
         expand.beginTime = 0
         
@@ -251,23 +251,23 @@ public extension SpringIndicator {
         group.animations = [expand, contract]
         group.duration = duration * 2
         group.fillMode = kCAFillModeForwards
-        group.removedOnCompletion = false
+        group.isRemovedOnCompletion = false
         
         return group
     }
     
-    private func contractAnimation(duration: CFTimeInterval) -> CAPropertyAnimation {
+    private func contractAnimation(_ duration: CFTimeInterval) -> CAPropertyAnimation {
         let anim = CAKeyframeAnimation(keyPath: "strokeStart")
         anim.duration = duration
         anim.keyTimes = Me.StrokeTiming
         anim.values = Me.StrokeValues
         anim.fillMode = kCAFillModeForwards
-        anim.removedOnCompletion = false
+        anim.isRemovedOnCompletion = false
         
         return anim
     }
     
-    private func expandAnimation(duration: CFTimeInterval) -> CAPropertyAnimation {
+    private func expandAnimation(_ duration: CFTimeInterval) -> CAPropertyAnimation {
         let anim = CAKeyframeAnimation(keyPath: "strokeEnd")
         anim.duration = duration
         anim.keyTimes = Me.StrokeTiming
@@ -279,16 +279,16 @@ public extension SpringIndicator {
 
 // MARK: - Timer
 internal extension SpringIndicator {
-    private func createStrokeTimer(timeInterval ti: NSTimeInterval, userInfo: AnyObject?, repeats yesOrNo: Bool) -> NSTimer {
-        return NSTimer(timeInterval: ti, target: self, selector: Selector("onStrokeTimer:"), userInfo: userInfo, repeats: yesOrNo)
+    private func createStrokeTimer(timeInterval ti: TimeInterval, userInfo: AnyObject?, repeats yesOrNo: Bool) -> Timer {
+        return Timer(timeInterval: ti, target: self, selector: #selector(SpringIndicator.onStrokeTimer(_:)), userInfo: userInfo, repeats: yesOrNo)
     }
     
-    private func setStrokeTimer(timer: NSTimer) {
+    private func setStrokeTimer(_ timer: Timer) {
         strokeTimer = timer
-        Me.timerRunLoop.addTimer(timer, forMode: NSRunLoopCommonModes)
+        Me.timerRunLoop.add(timer, forMode: RunLoopMode.commonModes)
     }
     
-    func onStrokeTimer(sender: AnyObject) {
+    func onStrokeTimer(_ sender: AnyObject) {
         stopAnimationsHandler?(self)
         intervalAnimationsHandler?(self)
         
@@ -296,7 +296,7 @@ internal extension SpringIndicator {
             return
         }
         
-        if let timer = sender as? NSTimer, key = timer.userInfo as? String where key == Me.ContractAnimationKey {
+        if let timer = sender as? Timer, key = timer.userInfo as? String where key == Me.ContractAnimationKey {
             let timer = createStrokeTimer(timeInterval: strokeDuration * 2, userInfo: Me.GroupAnimationKey, repeats: true)
             
             setStrokeTimer(timer)
@@ -309,7 +309,7 @@ internal extension SpringIndicator {
 // MARK: - Stroke
 public extension SpringIndicator {
     /// between 0.0 and 1.0.
-    public func strokeRatio(ratio: CGFloat) {
+    public func strokeRatio(_ ratio: CGFloat) {
         if ratio <= 0 {
             pathLayer = nil
         } else if ratio >= 1 {
@@ -319,7 +319,7 @@ public extension SpringIndicator {
         }
     }
     
-    private func strokeValue(value: CGFloat) {
+    private func strokeValue(_ value: CGFloat) {
         if pathLayer == nil {
             let shapeLayer = nextStrokeLayer(0)
             pathLayer = shapeLayer
@@ -372,9 +372,9 @@ public extension SpringIndicator {
         public override func layoutSubviews() {
             super.layoutSubviews()
             
-            backgroundColor = UIColor.clearColor()
-            userInteractionEnabled = false
-            autoresizingMask = [.FlexibleWidth, .FlexibleBottomMargin]
+            backgroundColor = UIColor.clear()
+            isUserInteractionEnabled = false
+            autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
             
             if let superview = superview {
                 frame.size.height = Me.DefaultContentHeight
@@ -387,8 +387,8 @@ public extension SpringIndicator {
             }
         }
         
-        public override func willMoveToSuperview(newSuperview: UIView!) {
-            super.willMoveToSuperview(newSuperview)
+        public override func willMove(toSuperview newSuperview: UIView!) {
+            super.willMove(toSuperview: newSuperview)
             
             targetView = newSuperview as? UIScrollView
             addObserver()
@@ -406,21 +406,35 @@ public extension SpringIndicator {
         }
         
         weak var target: AnyObject?
-        public override func addTarget(target: AnyObject?, action: Selector, forControlEvents controlEvents: UIControlEvents) {
-            super.addTarget(target, action: action, forControlEvents: controlEvents)
+        public override func addTarget(_ target: AnyObject?, action: Selector, for controlEvents: UIControlEvents) {
+            super.addTarget(target, action: action, for: controlEvents)
             
             self.target = target
         }
         
-        public override func removeTarget(target: AnyObject?, action: Selector, forControlEvents controlEvents: UIControlEvents) {
-            super.removeTarget(target, action: action, forControlEvents: controlEvents)
+        public override func removeTarget(_ target: AnyObject?, action: Selector?, for controlEvents: UIControlEvents) {
+            super.removeTarget(target, action: action, for: controlEvents)
             
             self.target = nil
         }
         
-        public override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-            switch context {
-            case &RefresherContext:
+        
+        //        public override func observeValue(forKeyPath keyPath: String?, of object: AnyObject?, change: [NSKeyValueChangeKey : AnyObject]?, context: UnsafeMutablePointer<Void>?) {
+        //            switch context {
+        //            case .RefresherConext:
+        //                print("Mello")
+        //                return
+        //            default:
+        //                print ("Hello")
+        //                return
+        //            }
+        //
+        //        }
+        
+        public override func observeValue(forKeyPath keyPath: String?, of object: AnyObject?, change: [NSKeyValueChangeKey : AnyObject]?, context: UnsafeMutablePointer<Void>?) {
+            
+            
+            if context == &RefresherContext {
                 if let scrollView = object as? UIScrollView {
                     if target == nil {
                         removeObserver()
@@ -438,7 +452,7 @@ public extension SpringIndicator {
                         return
                     }
                     
-                    if refreshing && scrollView.dragging == false {
+                    if refreshing && scrollView.isDragging == false {
                         refreshStart(scrollView)
                         return
                     }
@@ -449,8 +463,13 @@ public extension SpringIndicator {
                     indicator.strokeRatio(ratio)
                     rotateRatio(ratio)
                 }
-            default:
-                super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+                
+                
+            } else {
+                
+                super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+                
+                
             }
         }
         
@@ -459,32 +478,32 @@ public extension SpringIndicator {
             indicator.rotateDuration = 1
             indicator.strokeDuration = 0.5
             indicator.center = center
-            indicator.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleTopMargin, .FlexibleBottomMargin]
+            indicator.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
             addSubview(indicator)
         }
         
         private func addObserver() {
-            targetView?.addObserver(self, forKeyPath: Me.ObserverOffsetKeyPath, options: .New, context: &RefresherContext)
+            targetView?.addObserver(self, forKeyPath: Me.ObserverOffsetKeyPath, options: .new, context: &RefresherContext)
         }
         
         private func removeObserver() {
             targetView?.removeObserver(self, forKeyPath: Me.ObserverOffsetKeyPath, context: &RefresherContext)
         }
         
-        private func notObserveBlock(block: (() -> Void)) {
+        private func notObserveBlock(_ block: (() -> Void)) {
             removeObserver()
             block()
             addObserver()
         }
         
-        private func scrollOffset(scrollView: UIScrollView) -> CGFloat {
+        private func scrollOffset(_ scrollView: UIScrollView) -> CGFloat {
             var offsetY = scrollView.contentOffset.y
             offsetY += initialInsetTop
             
             return offsetY
         }
         
-        private func scrollRatio(scrollView: UIScrollView) -> CGFloat {
+        private func scrollRatio(_ scrollView: UIScrollView) -> CGFloat {
             var offsetY = scrollOffset(scrollView)
             
             offsetY += frame.size.height - indicator.frame.size.height
@@ -495,7 +514,7 @@ public extension SpringIndicator {
             return abs(offsetY / bounds.height)
         }
         
-        private func rotateRatio(ratio: CGFloat) {
+        private func rotateRatio(_ ratio: CGFloat) {
             let value = max(min(ratio, 1), 0)
             
             CATransaction.begin()
@@ -508,9 +527,9 @@ public extension SpringIndicator {
 
 // MARK: - Refresher start
 private extension SpringIndicator.Refresher {
-    private func refreshStart(scrollView: UIScrollView) {
-        sendActionsForControlEvents(.ValueChanged)
-        indicator.layer.addAnimation(refreshStartAnimation(), forKey: Me.ScaleAnimationKey)
+    private func refreshStart(_ scrollView: UIScrollView) {
+        sendActions(for: .valueChanged)
+        indicator.layer.add(refreshStartAnimation(), forKey: Me.ScaleAnimationKey)
         indicator.startAnimation(true)
         
         let insetTop = initialInsetTop + bounds.height
@@ -553,7 +572,7 @@ public extension SpringIndicator.Refresher {
             if scrollView.contentInset.top > insetTop {
                 let completionBlock: (() -> Void) = {
                     self.indicator.stopAnimation(false) { indicator in
-                        indicator.layer.removeAnimationForKey(Me.ScaleAnimationKey)
+                        indicator.layer.removeAnimation(forKey: Me.ScaleAnimationKey)
                     }
                 }
                 
@@ -561,19 +580,19 @@ public extension SpringIndicator.Refresher {
                 scrollView.contentInset.top = insetTop
                 
                 if beforeOffsetY < -insetTop {
-                    indicator.layer.addAnimation(refreshEndAnimation(), forKey: Me.ScaleAnimationKey)
+                    indicator.layer.add(refreshEndAnimation(), forKey: Me.ScaleAnimationKey)
                     
                     scrollView.contentOffset.y = beforeOffsetY
                     
-                    UIView.animateWithDuration(0.3, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 0, options: .AllowUserInteraction, animations: {
+                    UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
                         scrollView.contentOffset.y = -insetTop
-                        }) { _ in
-                            completionBlock()
+                    }) { _ in
+                        completionBlock()
                     }
                 } else {
                     CATransaction.begin()
                     CATransaction.setCompletionBlock(completionBlock)
-                    indicator.layer.addAnimation(refreshEndAnimation(), forKey: Me.ScaleAnimationKey)
+                    indicator.layer.add(refreshEndAnimation(), forKey: Me.ScaleAnimationKey)
                     CATransaction.commit()
                 }
                 
@@ -592,7 +611,7 @@ public extension SpringIndicator.Refresher {
         anim.toValue = 0
         anim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
         anim.fillMode = kCAFillModeForwards
-        anim.removedOnCompletion = false
+        anim.isRemovedOnCompletion = false
         
         return anim
     }
