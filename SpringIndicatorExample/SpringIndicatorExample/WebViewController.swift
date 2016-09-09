@@ -17,12 +17,12 @@ class WebViewController: UIViewController, UIWebViewDelegate {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        let url = NSURL(string: "https://www.apple.com")
-        let request = NSURLRequest(URL: url!)
+        let url = URL(string: "https://www.apple.com")
+        let request = URLRequest(url: url!)
         webView.loadRequest(request)
         
-        refreshControl.indicator.lineColor = UIColor.redColor()
-        refreshControl.addTarget(self, action: "onRefresh", forControlEvents: .ValueChanged)
+        refreshControl.indicator.lineColor = UIColor.red
+        refreshControl.addTarget(self, action: #selector(WebViewController.onRefresh), for: .valueChanged)
         webView.scrollView.addSubview(refreshControl)
     }
 
@@ -35,11 +35,11 @@ class WebViewController: UIViewController, UIWebViewDelegate {
         webView.reload()
     }
     
-    func webViewDidFinishLoad(webView: UIWebView) {
+    func webViewDidFinishLoad(_ webView: UIWebView) {
         refreshControl.endRefreshing()
     }
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
+    func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
         refreshControl.endRefreshing()
     }
 }
