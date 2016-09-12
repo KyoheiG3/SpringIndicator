@@ -11,11 +11,11 @@
 * Don't need to add a UIScrollView delegate.
 
 * Demo gif  
-![Indicator](https://github.com/KyoheiG3/assets/blob/master/SpringIndicator/indicator.gif)
-![Refresher](https://github.com/KyoheiG3/assets/blob/master/SpringIndicator/refresher.gif)
+![Indicator](https://raw.githubusercontent.com/KyoheiG3/assets/master/SpringIndicator/indicator.gif)
+![Refresher](https://raw.githubusercontent.com/KyoheiG3/assets/master/SpringIndicator/refresher.gif)
 
 * Image capture  
-![Image](https://github.com/KyoheiG3/assets/blob/master/SpringIndicator/refresher.png)
+![Image](https://raw.githubusercontent.com/KyoheiG3/assets/master/SpringIndicator/refresher.png)
 
 
 ## Requirements
