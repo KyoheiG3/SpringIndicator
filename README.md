@@ -22,10 +22,11 @@
 
 - Swift 3.0
 - iOS 7.0 or later
+- tvOS 9.0 or later
 
 ## How to Install SpringIndicator
 
-### iOS 8+
+### iOS 8+, tvOS
 
 #### Cocoapods
 
