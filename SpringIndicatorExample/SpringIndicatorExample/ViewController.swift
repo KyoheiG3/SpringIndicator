@@ -19,7 +19,7 @@ class ViewController: UIViewController {
         view.addSubview(defaultIndicator)
         defaultIndicator.startAnimation()
         
-        let colors = [UIColor.redColor(), UIColor.blueColor(), UIColor.orangeColor(), UIColor.greenColor()]
+        let colors = [UIColor.red, UIColor.blue, UIColor.orange, UIColor.green]
         var colorsIndex = 0
         
         let colorIndicator = SpringIndicator(frame: CGRect(x: 300, y: 100, width: 20, height: 20))
@@ -28,7 +28,8 @@ class ViewController: UIViewController {
         colorIndicator.rotateDuration = 1
         colorIndicator.strokeDuration = 0.5
         colorIndicator.intervalAnimationsHandler = { indicator in
-            if ++colorsIndex >= colors.count {
+            colorsIndex += 1
+            if colorsIndex >= colors.count {
                 colorsIndex = 0
             }
             

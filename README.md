@@ -18,6 +18,11 @@
 ![Image](https://github.com/KyoheiG3/assets/blob/master/SpringIndicator/refresher.png)
 
 
+## Requirements
+
+- Swift 3.0
+- iOS 7.0 or later
+
 ## How to Install SpringIndicator
 
 ### iOS 8+
