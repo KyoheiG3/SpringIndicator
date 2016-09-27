@@ -332,7 +332,7 @@ public extension SpringIndicator {
 
 // MARK: - Refresher
 public extension SpringIndicator {
-    public class Refresher: UIControl {
+    open class Refresher: UIControl {
         fileprivate typealias Me = Refresher
         
         fileprivate static let ObserverOffsetKeyPath = "contentOffset"
