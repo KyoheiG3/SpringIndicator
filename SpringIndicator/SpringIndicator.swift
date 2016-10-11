@@ -169,7 +169,9 @@ open class SpringIndicator: UIView {
         }
         
         open override func removeFromSuperview() {
-            removeObserver()
+            if targetView == superview {
+                targetView = nil
+            }
             super.removeFromSuperview()
         }
         
@@ -190,7 +192,6 @@ open class SpringIndicator: UIView {
             if context == &RefresherContext {
                 if let scrollView = object as? UIScrollView {
                     if target == nil {
-                        removeObserver()
                         targetView = nil
                         return
                     }
