@@ -109,7 +109,14 @@ open class SpringIndicator: UIView {
         fileprivate var initialInsetTop: CGFloat = 0
         open let indicator = SpringIndicator(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         open fileprivate(set) var refreshing: Bool = false
-        open fileprivate(set) var targetView: UIScrollView?
+        open var targetView: UIScrollView? {
+            willSet {
+                removeObserver()
+            }
+            didSet {
+                addObserver()
+            }
+        }
         
         deinit {
             indicator.stopAnimation(false)
@@ -136,16 +143,16 @@ open class SpringIndicator: UIView {
             
             backgroundColor = UIColor.clear
             isUserInteractionEnabled = false
-            autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
             
-            if let superview = superview {
+            if let scrollView = superview as? UIScrollView {
+                autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
                 frame.size.height = Me.DefaultContentHeight
-                frame.size.width = superview.bounds.width
-                center.x = superview.center.x
-                
-                if let scrollView = superview as? UIScrollView {
-                    initialInsetTop = scrollView.contentInset.top
-                }
+                frame.size.width = scrollView.bounds.width
+                center.x = scrollView.center.x
+            }
+            
+            if let scrollView = targetView {
+                initialInsetTop = scrollView.contentInset.top
             }
         }
         
@@ -153,7 +160,6 @@ open class SpringIndicator: UIView {
             super.willMove(toSuperview: newSuperview)
             
             targetView = newSuperview as? UIScrollView
-            addObserver()
         }
         
         open override func didMoveToSuperview() {
@@ -163,7 +169,9 @@ open class SpringIndicator: UIView {
         }
         
         open override func removeFromSuperview() {
-            removeObserver()
+            if targetView == superview {
+                targetView = nil
+            }
             super.removeFromSuperview()
         }
         
@@ -184,7 +192,6 @@ open class SpringIndicator: UIView {
             if context == &RefresherContext {
                 if let scrollView = object as? UIScrollView {
                     if target == nil {
-                        removeObserver()
                         targetView = nil
                         return
                     }
@@ -193,7 +200,9 @@ open class SpringIndicator: UIView {
                         return
                     }
                     
-                    frame.origin.y = scrollOffset(scrollView)
+                    if superview == scrollView {
+                        frame.origin.y = scrollOffset(scrollView)
+                    }
                     
                     if indicator.isSpinning() {
                         return
@@ -536,7 +545,7 @@ public extension SpringIndicator.Refresher {
     public func endRefreshing() {
         refreshing = false
         
-        if let scrollView = superview as? UIScrollView {
+        if let scrollView = targetView {
             let insetTop: CGFloat
             
             if scrollView.superview?.superview == nil {
