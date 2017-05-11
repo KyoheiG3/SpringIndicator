@@ -20,7 +20,7 @@
 
 ## Requirements
 
-- Swift 3.0
+- Swift 3.1
 - iOS 7.0 or later
 - tvOS 9.0 or later
 
@@ -151,17 +151,17 @@ func isSpinning() -> Bool
 * During stroke animation is `true`.
 
 ```swift
-func startAnimation(expand: Bool = default)
+func startAnimation(_ expand: Bool = default)
 ```
 * If start from a state in spread is `true`.
 
 ```swift
-func stopAnimation(waitAnimation: Bool, completion: ((SpringIndicator.SpringIndicator) -> Void)? = default)
+func stopAnimation(_ waitAnimation: Bool, completion: ((SpringIndicator.SpringIndicator) -> Swift.Void)? = default)
 ```
 * `true` is wait for stroke animation.
 
 ```swift
-func strokeRatio(ratio: CGFloat)
+func strokeRatio(_ ratio: CGFloat)
 ```
 * between `0.0` and `1.0`.
 
