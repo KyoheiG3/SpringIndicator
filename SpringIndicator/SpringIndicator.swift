@@ -8,6 +8,11 @@
 
 import UIKit
 
+extension Double {
+    fileprivate static let pi_2 = pi / 2
+    fileprivate static let pi_4 = pi / 4
+}
+
 @IBDesignable
 open class SpringIndicator: UIView {
     fileprivate typealias Me = SpringIndicator
@@ -21,26 +26,25 @@ open class SpringIndicator: UIView {
     fileprivate static let StrokeValues = [0, 0.1, 0.5, 0.9, 1]
     
     fileprivate static let DispatchQueueLabelTimer = "SpringIndicator.Timer.Thread"
-    fileprivate static let timerQueue = DispatchQueue(label: DispatchQueueLabelTimer, attributes: DispatchQueue.Attributes.concurrent)
-    fileprivate static let timerRunLoop = RunLoop.current
-    fileprivate static let timerPort = Port()
-    
-    open override class func initialize() {
-        super.initialize()
-        
-        timerQueue.async {
-            self.timerRunLoop.add(self.timerPort, forMode: RunLoopMode.commonModes)
-            self.timerRunLoop.run()
+    fileprivate static let timerQueue: DispatchQueue = {
+        let queue = DispatchQueue(label: DispatchQueueLabelTimer, attributes: .concurrent)
+        queue.async {
+            Me.timerRunLoop.add(Me.timerPort, forMode: .commonModes)
+            Me.timerRunLoop.run()
         }
-    }
+        return queue
+    }()
+    
+    fileprivate static let timerRunLoop = RunLoop.current
+    private static let timerPort = Port()
     
     fileprivate var strokeTimer: Timer? {
         didSet {
             oldValue?.invalidate()
         }
     }
-    fileprivate var rotateThreshold = (M_PI / M_PI_2 * 2) - 1
-    fileprivate var indicatorView: UIView
+    fileprivate let rotateThreshold: Double = 3
+    fileprivate let indicatorView: UIView
     fileprivate var animationCount: Double = 0
     fileprivate var pathLayer: CAShapeLayer? {
         didSet {
@@ -67,6 +71,7 @@ open class SpringIndicator: UIView {
     fileprivate var stopAnimationsHandler: ((SpringIndicator) -> Void)?
     
     public override init(frame: CGRect) {
+        _ = Me.timerQueue   // Reference to make instantiate
         indicatorView = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
         super.init(frame: frame)
         indicatorView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -76,6 +81,7 @@ open class SpringIndicator: UIView {
     }
     
     public required init?(coder aDecoder: NSCoder) {
+        _ = Me.timerQueue   // Reference to make instantiate
         indicatorView = UIView()
         super.init(coder: aDecoder)
         indicatorView.frame = bounds
@@ -238,8 +244,8 @@ open class SpringIndicator: UIView {
     fileprivate func nextRotatePath(_ count: Double) -> UIBezierPath {
         animationCount = count
         
-        let start = CGFloat(M_PI_2 * (0 - count))
-        let end = CGFloat(M_PI_2 * (rotateThreshold - count))
+        let start = CGFloat(Double.pi_2 * (0 - count))
+        let end = CGFloat(Double.pi_2 * (rotateThreshold - count))
         let center = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
         let radius = max(bounds.width, bounds.height) / 2
         
@@ -354,8 +360,8 @@ public extension SpringIndicator {
         let anim = CABasicAnimation(keyPath: "transform.rotation.z")
         anim.duration = duration
         anim.repeatCount = HUGE
-        anim.fromValue = -(M_PI + M_PI_4)
-        anim.toValue = M_PI - M_PI_4
+        anim.fromValue = -(Double.pi + Double.pi_4)
+        anim.toValue = Double.pi - Double.pi_4
         anim.isRemovedOnCompletion = false
         
         return anim
@@ -505,7 +511,7 @@ extension SpringIndicator.Refresher {
         
         CATransaction.begin()
         CATransaction.setDisableActions(true)
-        indicator.indicatorView.layer.transform = CATransform3DMakeRotation(CGFloat(M_PI - M_PI_4) * value, 0, 0, 1)
+        indicator.indicatorView.layer.transform = CATransform3DMakeRotation(CGFloat(Double.pi - Double.pi_4) * value, 0, 0, 1)
         CATransaction.commit()
     }
 }
