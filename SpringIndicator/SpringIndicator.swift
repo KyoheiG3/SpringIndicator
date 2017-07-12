@@ -15,6 +15,10 @@ extension Double {
 
 @IBDesignable
 open class SpringIndicator: UIView {
+    deinit {
+        stopAnimation(false)
+    }
+    
     fileprivate typealias Me = SpringIndicator
     
     fileprivate static let RotateAnimationKey = "rotateAnimation"
@@ -293,6 +297,9 @@ public extension SpringIndicator {
     
     /// true is wait for stroke animation.
     public func stopAnimation(_ waitAnimation: Bool, completion: ((SpringIndicator) -> Void)? = nil) {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
         if waitAnimation {
             stopAnimationsHandler = { indicator in
                 indicator.stopAnimation(false, completion: completion)
@@ -425,9 +432,11 @@ extension SpringIndicator {
         
         if let timer = sender as? Timer, timer.isValid {
             if let key = timer.userInfo as? String, key == Me.ContractAnimationKey {
+                objc_sync_enter(self)
                 let timer = createStrokeTimer(timeInterval: strokeDuration * 2, userInfo: Me.GroupAnimationKey as AnyObject?, repeats: true)
                 
                 setStrokeTimer(timer)
+                objc_sync_exit(self)
             }
         }
         
