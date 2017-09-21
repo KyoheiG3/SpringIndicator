@@ -48,9 +48,6 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="rotateDuration">
                                         <real key="value" value="2"/>
                                     </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="strokeDuration">
-                                        <real key="value" value="1"/>
-                                    </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="color" keyPath="lineColor">
                                         <color key="value" red="0.78270415145985406" green="0.364735401459854" blue="0.46612682481751827" alpha="1" colorSpace="calibratedRGB"/>
                                     </userDefinedRuntimeAttribute>
