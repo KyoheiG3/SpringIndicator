@@ -10,11 +10,11 @@
 * Refresher is a simple as UIRefreshControl.
 * Don't need to add a UIScrollView delegate.
 
-* Demo gif  
+* Demo gif
 ![Indicator](https://raw.githubusercontent.com/KyoheiG3/assets/master/SpringIndicator/indicator.gif)
 ![Refresher](https://raw.githubusercontent.com/KyoheiG3/assets/master/SpringIndicator/refresher.gif)
 
-* Image capture  
+* Image capture
 ![Image](https://raw.githubusercontent.com/KyoheiG3/assets/master/SpringIndicator/refresher.png)
 
 
@@ -34,9 +34,7 @@ Add the following to your `Podfile`:
 
 ```Ruby
 pod "SpringIndicator"
-use_frameworks!
 ```
-Note: the `use_frameworks!` is required for pods made in Swift.
 
 #### Carthage
 
@@ -122,12 +120,6 @@ Can use Interface Builder
 * Rotation duration.
 * Default is `1.5`.
 
-```swift
-@IBInspectable var strokeDuration: Double
-```
-* Stroke duration.
-* Default is `0.7`.
-
 #### Refresher
 
 ```swift
@@ -171,6 +163,15 @@ func strokeRatio(_ ratio: CGFloat)
 func endRefreshing()
 ```
 * Must be explicitly called when the refreshing has completed.
+
+## Author
+
+#### Kyohei Ito
+
+- [GitHub](https://github.com/kyoheig3)
+- [Twitter](https://twitter.com/kyoheig3)
+
+Follow me 🎉
 
 ## LICENSE
 
