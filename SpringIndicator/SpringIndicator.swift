@@ -468,7 +468,7 @@ extension SpringIndicator.Refresher {
     
     fileprivate func scrollOffset(_ scrollView: UIScrollView) -> CGFloat {
         var offsetY = scrollView.contentOffset.y
-        if #available(iOS 11.0, *) {
+        if #available(iOS 11.0, tvOS 11.0, *) {
             offsetY += initialInsetTop + scrollView.safeAreaInsets.top
         } else {
             offsetY += initialInsetTop
@@ -536,7 +536,7 @@ public extension SpringIndicator.Refresher {
         if let scrollView = targetView {
             let insetTop: CGFloat
             let safeAreaTop: CGFloat
-            if #available(iOS 11.0, *) {
+            if #available(iOS 11.0, tvOS 11.0, *) {
                 safeAreaTop = scrollView.safeAreaInsets.top
             } else {
                 safeAreaTop = 0
