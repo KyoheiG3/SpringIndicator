@@ -468,8 +468,12 @@ extension SpringIndicator.Refresher {
     
     fileprivate func scrollOffset(_ scrollView: UIScrollView) -> CGFloat {
         var offsetY = scrollView.contentOffset.y
-        offsetY += initialInsetTop
-        
+        if #available(iOS 11.0, *) {
+            offsetY += initialInsetTop + scrollView.safeAreaInsets.top
+        } else {
+            offsetY += initialInsetTop
+        }
+
         return offsetY
     }
     
@@ -531,14 +535,20 @@ public extension SpringIndicator.Refresher {
         
         if let scrollView = targetView {
             let insetTop: CGFloat
-            
+            let safeAreaTop: CGFloat
+            if #available(iOS 11.0, *) {
+                safeAreaTop = scrollView.safeAreaInsets.top
+            } else {
+                safeAreaTop = 0
+            }
+
             if scrollView.superview?.superview == nil {
                 insetTop = 0
             } else {
-                insetTop = initialInsetTop
+                insetTop = initialInsetTop + safeAreaTop
             }
             
-            if scrollView.contentInset.top > insetTop {
+            if scrollView.contentInset.top + safeAreaTop > insetTop {
                 let completionBlock: (() -> Void) = {
                     self.indicator.stopAnimation(false) { indicator in
                         indicator.layer.removeAnimation(forKey: Me.ScaleAnimationKey)
@@ -546,7 +556,7 @@ public extension SpringIndicator.Refresher {
                 }
                 
                 let beforeOffsetY = scrollView.contentOffset.y
-                scrollView.contentInset.top = insetTop
+                scrollView.contentInset.top = insetTop - safeAreaTop
                 
                 if beforeOffsetY < -insetTop {
                     indicator.layer.add(refreshEndAnimation(), forKey: Me.ScaleAnimationKey)
