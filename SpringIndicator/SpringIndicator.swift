@@ -51,8 +51,6 @@ open class SpringIndicator: UIView {
         return rotateDuration / 2
     }
     
-    fileprivate var stopAnimationsHandler: ((SpringIndicator) -> Void)?
-    
     public override init(frame: CGRect) {
         indicatorView = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
         super.init(frame: frame)
@@ -240,8 +238,6 @@ open class SpringIndicator: UIView {
 public extension SpringIndicator {
     /// If start from a state in spread is True.
     public func startAnimation(_ expand: Bool = false) {
-        stopAnimationsHandler = nil
-        
         if isSpinning() {
             return
         }
@@ -255,11 +251,15 @@ public extension SpringIndicator {
     /// true is wait for stroke animation.
     public func stopAnimation(_ waitAnimation: Bool, completion: ((SpringIndicator) -> Void)? = nil) {
         if waitAnimation {
-            stopAnimationsHandler = { indicator in
-                indicator.stopAnimation(false, completion: completion)
+            if let layer = pathLayer?.presentation() {
+                let time = Double(2 - layer.strokeStart - layer.strokeEnd)
+                DispatchQueue.main.asyncAfter(deadline: .now() + time) {
+                    self.stopAnimation(false, completion: completion)
+                }
+            } else {
+                stopAnimation(false, completion: completion)
             }
         } else {
-            stopAnimationsHandler = nil
             indicatorView.layer.removeAllAnimations()
             pathLayer?.strokeEnd = 0
             pathLayer = nil
