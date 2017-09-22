@@ -15,6 +15,10 @@ extension Double {
 
 @IBDesignable
 open class SpringIndicator: UIView {
+    fileprivate enum AnimationProcess {
+        case begin, during, skip
+    }
+
     deinit {
         stopAnimation(false)
     }
@@ -43,6 +47,8 @@ open class SpringIndicator: UIView {
     @IBInspectable open var lineWidth: CGFloat = 3
     /// Line Color. Default is gray.
     @IBInspectable open var lineColor: UIColor = UIColor.gray
+    /// Line Colors. If set, lineColor is not used.
+    open var lineColors: [UIColor] = []
     /// Cap style. Options are `round' and `square'. true is `round`. Default is false
     @IBInspectable open var lineCap: Bool = false
     /// Rotation duration. Default is 1.5
@@ -74,7 +80,7 @@ open class SpringIndicator: UIView {
         super.draw(rect)
         
         if animating {
-            startAnimation()
+            startAnimation(process: .begin)
         }
     }
     
@@ -210,8 +216,8 @@ open class SpringIndicator: UIView {
         }
     }
 
-    fileprivate func nextRotatePath(_ expand: Bool) -> UIBezierPath {
-        let pi = CGFloat(expand ? Double.pi_4 : 0)
+    fileprivate func nextRotatePath(_ process: AnimationProcess) -> UIBezierPath {
+        let pi = CGFloat(process == .during ? Double.pi_4 : 0)
         let start = pi
         let end = CGFloat(Double.pi + Double.pi_2) + pi
         let center = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
@@ -225,7 +231,7 @@ open class SpringIndicator: UIView {
     
     fileprivate func rotateLayer() -> CAShapeLayer {
         let shapeLayer = CAShapeLayer()
-        shapeLayer.strokeColor = lineColor.cgColor
+        shapeLayer.strokeColor = (lineColors.first ?? lineColor).cgColor
         shapeLayer.fillColor = nil
         shapeLayer.lineWidth = lineWidth
         shapeLayer.lineCap = lineCap ? kCALineCapRound : kCALineCapSquare
@@ -236,16 +242,20 @@ open class SpringIndicator: UIView {
 
 // MARK: - Animation
 public extension SpringIndicator {
+    public func startAnimation() {
+        startAnimation(process: .begin)
+    }
+
     /// If start from a state in spread is True.
-    public func startAnimation(_ expand: Bool = false) {
+    fileprivate func startAnimation(process: AnimationProcess) {
         if isSpinning() {
             return
         }
         
-        let animation = rotateAnimation(rotateDuration, expand: expand)
+        let animation = rotateAnimation(rotateDuration, process: process)
         indicatorView.layer.add(animation, forKey: Me.RotateAnimationKey)
-        
-        strokeTransaction(expand)
+
+        strokeTransaction(process)
     }
     
     /// true is wait for stroke animation.
@@ -274,43 +284,87 @@ public extension SpringIndicator {
         }
     }
     
-    fileprivate func strokeTransaction(_ expand: Bool) {
+    fileprivate func strokeTransaction(_ process: AnimationProcess) {
         if pathLayer == nil {
             let layer = rotateLayer()
             pathLayer = layer
             indicatorView.layer.addSublayer(layer)
         }
 
-        pathLayer?.path = nextRotatePath(expand).cgPath
+        pathLayer?.path = nextRotatePath(process).cgPath
 
-        if expand {
+        CATransaction.begin()
+        if process == .during {
             CATransaction.setCompletionBlock() {
                 self.pathLayer?.removeAllAnimations()
-                self.startAnimation()
+                self.startAnimation(process: .skip)
+            }
+        } else {
+            if lineColors.count > 1 {
+                pathLayer?.add(colorAnimation(rotateDuration, process: process), forKey: "colorAnimation")
             }
         }
 
-        let animation = nextStrokeAnimation(expand)
-        let animationKey = nextAnimationKey(expand)
+        let animation = nextStrokeAnimation(process)
+        let animationKey = nextAnimationKey(process)
         pathLayer?.add(animation, forKey: animationKey)
+        CATransaction.commit()
     }
 
-    fileprivate func nextAnimationKey(_ expand: Bool) -> String {
-        return expand ? Me.ContractAnimationKey : Me.GroupAnimationKey
+    fileprivate func nextAnimationKey(_ process: AnimationProcess) -> String {
+        return process == .during ? Me.ContractAnimationKey : Me.GroupAnimationKey
     }
     
-    fileprivate func nextStrokeAnimation(_ expand: Bool) -> CAAnimation {
-        return expand ? contractAnimation(strokeDuration) : groupAnimation(strokeDuration)
+    fileprivate func nextStrokeAnimation(_ process: AnimationProcess) -> CAAnimation {
+        return process == .during ? contractAnimation(strokeDuration) : groupAnimation(strokeDuration)
     }
-    
+
+    fileprivate func colorAnimationKeyTimes() -> [NSNumber] {
+        let c = Float(lineColors.count)
+        return stride(from: 1, through: c, by: 1).reduce([]) { (r: [NSNumber], f: Float) in
+            r + [NSNumber(value: f/c-1/c), NSNumber(value: f/c)]
+        }
+    }
+
+    @nonobjc fileprivate func colorAnimationValues(process: AnimationProcess) -> [CGColor] {
+        var colors = ArraySlice(lineColors)
+        var first: UIColor?
+
+        if process == .skip {
+            first = colors.first
+            colors = colors.dropFirst()
+        }
+
+        var cgColors = colors.reduce([]) { (r: [CGColor], c: UIColor) in
+            r + [c.cgColor, c.cgColor]
+        }
+
+        if let first = first {
+            cgColors.append(contentsOf: [first.cgColor, first.cgColor])
+        }
+
+        return cgColors
+    }
+
     // MARK: animations
-    fileprivate func rotateAnimation(_ duration: CFTimeInterval, expand: Bool) -> CAPropertyAnimation {
+    fileprivate func colorAnimation(_ duration: CFTimeInterval, process: AnimationProcess) -> CAPropertyAnimation {
+        let anim = CAKeyframeAnimation(keyPath: "strokeColor")
+        anim.duration = duration * CFTimeInterval(lineColors.count)
+        anim.repeatCount = HUGE
+        anim.keyTimes = colorAnimationKeyTimes()
+        anim.values = colorAnimationValues(process: process)
+        anim.fillMode = kCAFillModeForwards
+        anim.isRemovedOnCompletion = false
+        return anim
+    }
+
+    fileprivate func rotateAnimation(_ duration: CFTimeInterval, process: AnimationProcess) -> CAPropertyAnimation {
         let anim = CABasicAnimation(keyPath: "transform.rotation.z")
         anim.duration = duration
         anim.repeatCount = HUGE
         anim.fillMode = kCAFillModeForwards
         anim.isRemovedOnCompletion = false
-        if expand {
+        if process == .during {
             anim.fromValue = -(Double.pi + Double.pi_2)
             anim.toValue = Double.pi
         } else {
@@ -375,7 +429,7 @@ public extension SpringIndicator {
     private func strokeValue(_ value: CGFloat) {
         if pathLayer == nil {
             let shapeLayer = rotateLayer()
-            shapeLayer.path = nextRotatePath(false).cgPath
+            shapeLayer.path = nextRotatePath(.begin).cgPath
             pathLayer = shapeLayer
             indicatorView.layer.addSublayer(shapeLayer)
         }
@@ -445,7 +499,7 @@ private extension SpringIndicator.Refresher {
     func refreshStart(_ scrollView: UIScrollView) {
         sendActions(for: .valueChanged)
         indicator.layer.add(refreshStartAnimation(), forKey: Me.ScaleAnimationKey)
-        indicator.startAnimation(true)
+        indicator.startAnimation(process: .during)
         
         let insetTop = initialInsetTop + bounds.height
         

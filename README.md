@@ -20,7 +20,7 @@
 
 ## Requirements
 
-- Swift 3.1
+- Swift 3.2
 - iOS 7.0 or later
 - tvOS 9.0 or later
 
@@ -108,6 +108,13 @@ Can use Interface Builder
 * Default is `gray`.
 
 ```swift
+var lineColors: [UIColor]
+```
+* Line Colors.
+* Can change some colors during rotation.
+* If set, `lineColor` is not used.
+
+```swift
 @IBInspectable var lineCap: Bool
 ```
 * Cap style.
@@ -143,7 +150,7 @@ func isSpinning() -> Bool
 * During stroke animation is `true`.
 
 ```swift
-func startAnimation(_ expand: Bool = default)
+func startAnimation()
 ```
 * If start from a state in spread is `true`.
 
