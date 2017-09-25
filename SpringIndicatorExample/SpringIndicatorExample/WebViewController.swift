@@ -11,7 +11,7 @@ import SpringIndicator
 
 class WebViewController: UIViewController, UIWebViewDelegate {
     @IBOutlet weak var webView: UIWebView!
-    let refreshControl = SpringIndicator.Refresher()
+    let refreshControl = RefreshIndicator()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,7 +31,7 @@ class WebViewController: UIViewController, UIWebViewDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    func onRefresh() {
+    @objc func onRefresh() {
         webView.reload()
     }
     
