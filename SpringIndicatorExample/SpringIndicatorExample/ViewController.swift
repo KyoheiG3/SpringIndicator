@@ -16,15 +16,17 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         let defaultIndicator = SpringIndicator(frame: CGRect(x: 100, y: 100, width: 60, height: 60))
+        defaultIndicator.lineColors = [.red, .blue, .orange, .green]
+        defaultIndicator.rotationDuration = 2
         view.addSubview(defaultIndicator)
-        defaultIndicator.startAnimation()
+        defaultIndicator.start()
 
         let colorIndicator = SpringIndicator(frame: CGRect(x: 300, y: 100, width: 20, height: 20))
         colorIndicator.lineColor = UIColor.red
         colorIndicator.lineWidth = 2
-        colorIndicator.rotateDuration = 1
+        colorIndicator.rotationDuration = 1
         view.addSubview(colorIndicator)
-        colorIndicator.startAnimation()
+        colorIndicator.start()
     }
 
     override func didReceiveMemoryWarning() {

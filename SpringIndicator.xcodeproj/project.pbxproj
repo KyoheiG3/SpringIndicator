@@ -7,10 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C75202161F74F67E005E1197 /* Double+Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75202151F74F67E005E1197 /* Double+Math.swift */; };
+		C75202181F74F77A005E1197 /* RefreshIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75202171F74F77A005E1197 /* RefreshIndicator.swift */; };
 		C75E9E3B1AA8B500000304B8 /* SpringIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = C75E9E3A1AA8B500000304B8 /* SpringIndicator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C75E9E411AA8B500000304B8 /* SpringIndicator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C75E9E351AA8B500000304B8 /* SpringIndicator.framework */; };
 		C75E9E481AA8B500000304B8 /* SpringIndicatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75E9E471AA8B500000304B8 /* SpringIndicatorTests.swift */; };
 		C75E9E521AA8B529000304B8 /* SpringIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75E9E511AA8B529000304B8 /* SpringIndicator.swift */; };
+		C77771011F789C2B002D585C /* CALayer+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77771001F789C2B002D585C /* CALayer+Animation.swift */; };
+		C77771031F789CA0002D585C /* CAPropertyAnimation+Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77771021F789CA0002D585C /* CAPropertyAnimation+Key.swift */; };
+		C77771051F789D82002D585C /* AnimationProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77771041F789D82002D585C /* AnimationProcess.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,6 +29,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C75202151F74F67E005E1197 /* Double+Math.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Math.swift"; sourceTree = "<group>"; };
+		C75202171F74F77A005E1197 /* RefreshIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshIndicator.swift; sourceTree = "<group>"; };
 		C75E9E351AA8B500000304B8 /* SpringIndicator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SpringIndicator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C75E9E391AA8B500000304B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C75E9E3A1AA8B500000304B8 /* SpringIndicator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpringIndicator.h; sourceTree = "<group>"; };
@@ -31,6 +38,9 @@
 		C75E9E461AA8B500000304B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C75E9E471AA8B500000304B8 /* SpringIndicatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringIndicatorTests.swift; sourceTree = "<group>"; };
 		C75E9E511AA8B529000304B8 /* SpringIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpringIndicator.swift; sourceTree = "<group>"; };
+		C77771001F789C2B002D585C /* CALayer+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Animation.swift"; sourceTree = "<group>"; };
+		C77771021F789CA0002D585C /* CAPropertyAnimation+Key.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CAPropertyAnimation+Key.swift"; sourceTree = "<group>"; };
+		C77771041F789D82002D585C /* AnimationProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationProcess.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +83,11 @@
 		C75E9E371AA8B500000304B8 /* SpringIndicator */ = {
 			isa = PBXGroup;
 			children = (
+				C77771041F789D82002D585C /* AnimationProcess.swift */,
+				C77771001F789C2B002D585C /* CALayer+Animation.swift */,
+				C77771021F789CA0002D585C /* CAPropertyAnimation+Key.swift */,
+				C75202151F74F67E005E1197 /* Double+Math.swift */,
+				C75202171F74F77A005E1197 /* RefreshIndicator.swift */,
 				C75E9E3A1AA8B500000304B8 /* SpringIndicator.h */,
 				C75E9E511AA8B529000304B8 /* SpringIndicator.swift */,
 				C75E9E381AA8B500000304B8 /* Supporting Files */,
@@ -216,7 +231,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C77771051F789D82002D585C /* AnimationProcess.swift in Sources */,
+				C75202161F74F67E005E1197 /* Double+Math.swift in Sources */,
+				C77771031F789CA0002D585C /* CAPropertyAnimation+Key.swift in Sources */,
 				C75E9E521AA8B529000304B8 /* SpringIndicator.swift in Sources */,
+				C77771011F789C2B002D585C /* CALayer+Animation.swift in Sources */,
+				C75202181F74F77A005E1197 /* RefreshIndicator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

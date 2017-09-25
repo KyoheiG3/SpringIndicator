@@ -10,23 +10,19 @@
 * Refresher is a simple as UIRefreshControl.
 * Don't need to add a UIScrollView delegate.
 
-* Demo gif
 ![Indicator](https://raw.githubusercontent.com/KyoheiG3/assets/master/SpringIndicator/indicator.gif)
 ![Refresher](https://raw.githubusercontent.com/KyoheiG3/assets/master/SpringIndicator/refresher.gif)
 
-* Image capture
 ![Image](https://raw.githubusercontent.com/KyoheiG3/assets/master/SpringIndicator/refresher.png)
 
 
 ## Requirements
 
-- Swift 3.2
-- iOS 7.0 or later
+- Swift 4
+- iOS 8.0 or later
 - tvOS 9.0 or later
 
 ## How to Install SpringIndicator
-
-### iOS 8+, tvOS
 
 #### Cocoapods
 
@@ -44,19 +40,7 @@ Add the following to your `Cartfile`:
 github "KyoheiG3/SpringIndicator"
 ```
 
-### iOS 7
-
-Just add everything in the `SpringIndicator.swift` file to your project.
-
 ## Usage
-
-### import
-
-If target is ios8.0 or later, please import the `SpringIndicator`.
-
-```Swift
-import SpringIndicator
-```
 
 ### Example
 
@@ -65,13 +49,13 @@ Add Code
 ```swift
 let indicator = SpringIndicator(frame: CGRect(x: 100, y: 100, width: 60, height: 60))
 view.addSubview(indicator)
-indicator.startAnimation()
+indicator.start()
 ```
 
-Refresher
+RefreshIndicator
 
 ```swift
-let refreshControl = SpringIndicator.Refresher()
+let refreshControl = RefreshIndicator()
 refreshControl.addTarget(self, action: "onRefresh", forControlEvents: .ValueChanged)
 scrollView.addSubview(refreshControl)
 ```
@@ -127,15 +111,15 @@ var lineColors: [UIColor]
 * Rotation duration.
 * Default is `1.5`.
 
-#### Refresher
+#### RefreshIndicator
 
 ```swift
 let indicator: SpringIndicator
 ```
-* Refresher Indicator.
+* Indicator for refresh control.
 
 ```swift
-var refreshing: Bool
+var isRefreshing: Bool
 ```
 * Refreshing status.
 
@@ -145,19 +129,20 @@ var refreshing: Bool
 #### Indicator
 
 ```swift
-func isSpinning() -> Bool
+var isSpinning: Bool
 ```
 * During stroke animation is `true`.
 
 ```swift
-func startAnimation()
+func start()
 ```
-* If start from a state in spread is `true`.
+* Start animating.
 
 ```swift
-func stopAnimation(_ waitAnimation: Bool, completion: ((SpringIndicator.SpringIndicator) -> Swift.Void)? = default)
+func stop(with: Bool = default, completion: ((SpringIndicator) -> Swift.Void)? = default)
 ```
-* `true` is wait for stroke animation.
+* Stop animating.
+* If true, waiting for stroke animation.
 
 ```swift
 func strokeRatio(_ ratio: CGFloat)

@@ -11,7 +11,7 @@ import SpringIndicator
 
 class TableViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
-    let refreshControl = SpringIndicator.Refresher()
+    let refreshControl = RefreshIndicator()
     
     let dataSourceList: [[String]] = [[Int](0..<20).map({ "section 0, cell \($0)" })]
     
@@ -28,10 +28,8 @@ class TableViewController: UIViewController {
         tableView.addSubview(refreshControl)
     }
     
-    func onRefresh() {
-        let delay = 2.0 * Double(NSEC_PER_SEC)
-        let time  = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
-        DispatchQueue.main.asyncAfter(deadline: time) {
+    @objc func onRefresh() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.refreshControl.endRefreshing()
         }
     }
