@@ -76,12 +76,14 @@ open class SpringIndicator: UIView {
 
     open override func layoutSubviews() {
         super.layoutSubviews()
-        restartAnimations()
+        restartAnimationsIfNeeded()
     }
 
-    private func restartAnimations() {
-        stop()
-        start(for: .begin)
+    private func restartAnimationsIfNeeded() {
+        if isSpinning {
+            stop()
+            start(for: .begin)
+        }
     }
 
     private func makeRotationPath(for process: AnimationProcess) -> UIBezierPath {
