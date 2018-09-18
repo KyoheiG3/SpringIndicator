@@ -9,9 +9,6 @@
 import UIKit
 
 public class RefreshIndicator: UIControl {
-    deinit {
-        stopIndicatorAnimation()
-    }
 
     private let defaultContentHeight: CGFloat = 60
     private var refreshContext = UInt8()
@@ -43,6 +40,10 @@ public class RefreshIndicator: UIControl {
         super.init(coder: aDecoder)
 
         setupIndicator()
+    }
+
+    deinit {
+        stopIndicatorAnimation()
     }
 
     private func setupIndicator() {
