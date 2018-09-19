@@ -91,7 +91,7 @@ open class SpringIndicator: UIView {
         shapeLayer.strokeColor = (lineColors.first ?? lineColor).cgColor
         shapeLayer.fillColor = nil
         shapeLayer.lineWidth = lineWidth
-        shapeLayer.lineCap = lineCap ? kCALineCapRound : kCALineCapSquare
+        shapeLayer.lineCap = lineCap ? .round : .square
 
         return shapeLayer
     }
@@ -163,7 +163,7 @@ extension SpringIndicator {
         animation.repeatCount = HUGE
         animation.fromValue = process.fromAngle()
         animation.toValue = process.toAngle()
-        animation.fillMode = kCAFillModeForwards
+        animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
 
         return animation
@@ -181,7 +181,7 @@ extension SpringIndicator {
         animation.animations = [expand, contract]
         animation.duration = expand.duration + contract.duration
         animation.repeatCount = HUGE
-        animation.fillMode = kCAFillModeForwards
+        animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
 
         return animation
@@ -192,7 +192,7 @@ extension SpringIndicator {
         animation.duration = strokeDuration
         animation.keyTimes = [0, 0.3, 0.5, 0.7, 1]
         animation.values = [0, 0.1, 0.5, 0.9, 1]
-        animation.fillMode = kCAFillModeForwards
+        animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
 
         return animation
@@ -205,7 +205,7 @@ extension SpringIndicator {
         animation.repeatCount = HUGE
         animation.keyTimes = colorAnimationKeyTimes()
         animation.values = colorAnimationValues(for: process)
-        animation.fillMode = kCAFillModeForwards
+        animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
         return animation
     }
