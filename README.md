@@ -18,7 +18,7 @@
 
 ## Requirements
 
-- Swift 4
+- Swift 4.2
 - iOS 8.0 or later
 - tvOS 9.0 or later
 
