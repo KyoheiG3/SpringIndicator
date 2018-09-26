@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class RefreshIndicator: UIControl {
+open class RefreshIndicator: UIControl {
     deinit {
         stopIndicatorAnimation()
     }
