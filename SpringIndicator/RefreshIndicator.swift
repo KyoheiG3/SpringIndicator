@@ -8,7 +8,10 @@
 
 import UIKit
 
-public class RefreshIndicator: UIControl {
+open class RefreshIndicator: UIControl {
+    deinit {
+        stopIndicatorAnimation()
+    }
 
     private let defaultContentHeight: CGFloat = 60
     private var refreshContext = UInt8()
@@ -91,14 +94,14 @@ public class RefreshIndicator: UIControl {
         super.removeFromSuperview()
     }
 
-    open override func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControlEvents) {
-        super.addTarget(target, action: action, for: controlEvents)
+    open override func addTarget(_ target: Any?, action: Selector, for controlEvent: UIControl.Event) {
+        super.addTarget(target, action: action, for: controlEvent)
 
         self.target = target as AnyObject?
     }
 
-    open override func removeTarget(_ target: Any?, action: Selector?, for controlEvents: UIControlEvents) {
-        super.removeTarget(target, action: action, for: controlEvents)
+    open override func removeTarget(_ target: Any?, action: Selector?, for controlEvent: UIControl.Event) {
+        super.removeTarget(target, action: action, for: controlEvent)
 
         self.target = nil
     }
@@ -258,7 +261,7 @@ extension RefreshIndicator {
         anim.autoreverses = true
         anim.fromValue = 1
         anim.toValue = 1.3
-        anim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
+        anim.timingFunction = CAMediaTimingFunction(name: .easeIn)
 
         return anim
     }
@@ -270,8 +273,8 @@ extension RefreshIndicator {
         anim.repeatCount = 1
         anim.fromValue = 1
         anim.toValue = 0
-        anim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
-        anim.fillMode = kCAFillModeForwards
+        anim.timingFunction = CAMediaTimingFunction(name: .easeIn)
+        anim.fillMode = .forwards
         anim.isRemovedOnCompletion = false
 
         return anim

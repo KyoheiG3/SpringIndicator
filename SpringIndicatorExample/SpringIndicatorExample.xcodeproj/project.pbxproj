@@ -215,7 +215,7 @@
 			attributes = {
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = kyohei_ito;
 				TargetAttributes = {
 					C724B8B51AA8CC31006F0F00 = {
