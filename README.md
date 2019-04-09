@@ -10,15 +10,15 @@
 * Refresher is a simple as UIRefreshControl.
 * Don't need to add a UIScrollView delegate.
 
-![Indicator](https://raw.githubusercontent.com/KyoheiG3/assets/master/SpringIndicator/indicator.gif)
-![Refresher](https://raw.githubusercontent.com/KyoheiG3/assets/master/SpringIndicator/refresher.gif)
+![Indicator](https://user-images.githubusercontent.com/5707132/55774385-e4828580-5acf-11e9-8a4e-075e52660566.gif)
+![Refresher](https://user-images.githubusercontent.com/5707132/55774407-f49a6500-5acf-11e9-9e36-9248e89d7ff1.gif)
 
-![Image](https://raw.githubusercontent.com/KyoheiG3/assets/master/SpringIndicator/refresher.png)
+![Image](https://user-images.githubusercontent.com/5707132/55774429-0a0f8f00-5ad0-11e9-91d6-7ab0ae36e409.png)
 
 
 ## Requirements
 
-- Swift 4.2
+- Swift 5
 - iOS 8.0 or later
 - tvOS 9.0 or later
 
@@ -68,7 +68,7 @@ refreshControl.endRefreshing()
 
 Can use Interface Builder
 
-![Interface Builder](https://github.com/KyoheiG3/assets/blob/master/SpringIndicator/interface_builder.png)
+![Interface Builder](https://user-images.githubusercontent.com/5707132/55774482-3d521e00-5ad0-11e9-9020-924d50bd8eb1.png)
 
 
 ### Variable
