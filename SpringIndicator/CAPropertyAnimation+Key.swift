@@ -6,6 +6,8 @@
 //  Copyright © 2017年 kyohei_ito. All rights reserved.
 //
 
+import UIKit
+
 extension CAPropertyAnimation {
     enum Key: String {
         case strokeStart = "strokeStart"
