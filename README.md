@@ -40,6 +40,14 @@ Add the following to your `Cartfile`:
 github "KyoheiG3/SpringIndicator"
 ```
 
+### Swift Package Manager
+
+To install BulletinBoard using the [Swift Package Manager](https://swift.org/package-manager/), add this dependency to your Package.swift file:
+
+```swift
+.package(url: "https://github.com/KyoheiG3/SpringIndicator.git", from: "5.1.0")
+```
+
 ## Usage
 
 ### Example
