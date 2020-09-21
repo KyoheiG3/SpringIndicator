@@ -10,24 +10,25 @@ import UIKit
 import SpringIndicator
 
 class TableViewController: UIViewController {
+
     @IBOutlet weak var tableView: UITableView!
+    
     let refreshControl = RefreshIndicator()
     
     let dataSourceList: [[String]] = [[Int](0..<20).map({ "section 0, cell \($0)" })]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        
         tableView.dataSource = self
         tableView.delegate = self
-        
+
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
-        
+
         refreshControl.addTarget(self, action: #selector(TableViewController.onRefresh), for: .valueChanged)
+
         tableView.addSubview(refreshControl)
     }
-    
+
     @objc func onRefresh() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.refreshControl.endRefreshing()

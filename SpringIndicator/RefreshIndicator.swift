@@ -45,6 +45,10 @@ open class RefreshIndicator: UIControl {
         setupIndicator()
     }
 
+    deinit {
+        stopIndicatorAnimation()
+    }
+
     private func setupIndicator() {
         indicator.lineWidth = 2
         indicator.rotationDuration = 1

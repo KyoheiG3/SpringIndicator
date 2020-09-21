@@ -10,9 +10,6 @@ import UIKit
 
 @IBDesignable
 open class SpringIndicator: UIView {
-    deinit {
-        stop()
-    }
 
     let indicatorView: UIView
     fileprivate var pathLayer: CAShapeLayer? {
@@ -65,11 +62,26 @@ open class SpringIndicator: UIView {
         
         backgroundColor = UIColor.clear
     }
-    
+
+    deinit {
+        stop()
+    }
+
     open override func draw(_ rect: CGRect) {
         super.draw(rect)
-        
         if animating {
+            start(for: .begin)
+        }
+    }
+
+    open override func layoutSubviews() {
+        super.layoutSubviews()
+        restartAnimationsIfNeeded()
+    }
+
+    private func restartAnimationsIfNeeded() {
+        if isSpinning {
+            stop()
             start(for: .begin)
         }
     }

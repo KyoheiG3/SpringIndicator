@@ -13,12 +13,25 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        
         let defaultIndicator = SpringIndicator(frame: CGRect(x: 100, y: 100, width: 60, height: 60))
         defaultIndicator.lineColors = [.red, .blue, .orange, .green]
         defaultIndicator.rotationDuration = 2
+        defaultIndicator.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(defaultIndicator)
+
+        let topAnchor: NSLayoutYAxisAnchor
+        if #available(iOS 11.0, *) {
+            topAnchor = view.safeAreaLayoutGuide.topAnchor
+        } else {
+            topAnchor = topLayoutGuide.topAnchor
+        }
+
+        NSLayoutConstraint.activate([
+            defaultIndicator.topAnchor.constraint(equalTo: topAnchor, constant: 40),
+            defaultIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            defaultIndicator.heightAnchor.constraint(equalToConstant: 40),
+            defaultIndicator.widthAnchor.constraint(equalToConstant: 40),
+        ])
         defaultIndicator.start()
 
         let colorIndicator = SpringIndicator(frame: CGRect(x: 300, y: 100, width: 20, height: 20))
@@ -29,9 +42,4 @@ class ViewController: UIViewController {
         colorIndicator.start()
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
 }
-
